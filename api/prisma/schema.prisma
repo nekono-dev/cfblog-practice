@@ -1,0 +1,60 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Page {
+  id       Int        @id @unique @default(autoincrement())
+  pageId   String     @unique
+  title    String
+  text     String?
+  imgId    String?
+  // 1ページには複数タグがつく、タグ一つには複数ページつく
+  // 多対多なので、PageTags中間テーブルを作成する
+  PageTags PageTags[]
+  likes    Like[]
+  date     DateTime
+}
+
+model Tag {
+  id       Int        @id @unique @default(autoincrement())
+  label    String     @unique
+  // 中間テーブルを定義
+  PageTags PageTags[]
+}
+
+model PageTags {
+  page   Page @relation(fields: [pageId], references: [id])
+  tag    Tag  @relation(fields: [tagId], references: [id])
+  pageId Int
+  tagId  Int
+
+  @@id([pageId, tagId]) // 複合主キー（多対多）
+}
+
+model Like {
+  id    Int  @id @unique @default(autoincrement())
+  count Int
+  // 外部キーとしてlikeIdを指定、userIdとの中間テーブルを作成
+  user  User @relation(fields: [id], references: [id])
+  // 外部キーとして
+  page  Page @relation(fields: [id], references: [id])
+}
+
+model User {
+  id      Int    @id @unique @default(autoincrement())
+  userUId String @unique
+  name    String
+  // 認証は別途検討のため、いったんtokenとしておく
+  token   String
+  likes   Like[]
+}

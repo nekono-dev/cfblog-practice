@@ -33,6 +33,17 @@ Cloudflare Pages/D1/R2を使ったブログのユースケースプラクティ�
 
 </details>
 
+## データベース設計
+
+![dbdetail.png](.github/images/dbdetail.png)
+
+- Page: ページを管理。Likeとタグの外部キーを持つ
+    - 投稿者は管理者のみであるため、ユーザへのリレーションを持たない。
+- Tag: タグ、ページに紐づく。
+- PageTags: ページとタグの中間テーブル
+- Like: ページで投下されたユーザごとのLike
+- User: 閲覧ユーザ
+
 ## セットアップ
 
 ### 事前準備
