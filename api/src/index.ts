@@ -17,67 +17,126 @@
 // 	},
 // } satisfies ExportedHandler<Env>;
 
-import { PrismaClient } from './generated/prisma/';
+import { Prisma, PrismaClient } from './generated/prisma/';
 import { PrismaD1 } from '@prisma/adapter-d1';
-import upload from './upload';
-import get from './get';
+import { PageSchema } from './generated/zod/modelSchema';
+
+const PageInputSchema = PageSchema.omit({ id: true }).partial({ imgId: true });
 
 export interface Env {
 	BUCKET: R2Bucket;
 	DB: D1Database;
 }
 
-export default {
-	async fetch(request: Request, env: Env): Promise<Response> {
-		const url = new URL(request.url);
-		// 認証の検討後、本workerは分離することを考慮する
+import { Hono } from 'hono';
 
-		// "",upload, XXXX といった、先頭文字0を回避
-		const urlSplitted = url.pathname.split('/').splice(0, 1);
-		if (urlSplitted.length !== 0) {
-			const methodName = urlSplitted[0];
-			let response;
+const app = new Hono<{ Bindings: Env }>({ strict: true });
 
-			const adapter = new PrismaD1(env.DB);
-			const prisma = new PrismaClient({ adapter });
+/**
+ * 画像アップロード
+ */
+app.post('/upload/image', async (c) => {
+	const contentType = c.req.header('Content-Type');
+	if (contentType === undefined) {
+		return c.json({ error: 'Method Not Allowed' }, 405);
+	}
+	if (!contentType.startsWith('image/')) {
+		return c.json({ error: 'Unsupported Content-Type' }, 415);
+	}
+	const body = await c.req.arrayBuffer();
+	const size = body.byteLength;
 
-			switch (methodName) {
-				case 'upload':
-					// /upload/XXXX の形式ではない場合
-					// splitの結果が"upload","XXXX" ではない場合は拒否
-					if (urlSplitted.length !== 2) {
-						break;
-					}
-					// uploadプロセスより結果を取得
-					response = await upload({
-						request: request,
-						bucket: env.BUCKET,
-						prisma: prisma,
-						contentName: urlSplitted[1],
-					});
-					break;
-				default:
-					// splitの結果でサブパスが存在する場合は拒否
-					if (urlSplitted.length !== 1) {
-						break;
-					}
-					response = await get({
-						request: request,
-						prisma: prisma,
-						contentName: urlSplitted[1],
-					});
-					break;
-			}
-			if (response !== undefined) {
-				return response;
+	if (size === 0) {
+		return c.json({ error: 'Uploaded image is empty' }, 400);
+	}
+	const extension = contentType.split('/')[1];
+
+	// ファイル名.jpeg, ファイル名.png
+	const filename = `${crypto.randomUUID().replace(/-/g, '')}.${extension}`;
+	await c.env.BUCKET.put(filename, body, {
+		httpMetadata: {
+			contentType,
+		},
+	});
+	return new Response(JSON.stringify({ key: filename }));
+});
+
+/**
+ * ブログアップロード
+ */
+app.post('/upload/post', async (c) => {
+	const contentType = c.req.header('Content-Type');
+	if (contentType === undefined) {
+		return c.json({ error: 'Method Not Allowed' }, 405);
+	}
+	if (!contentType.startsWith('application/json')) {
+		return c.json({ error: 'Unsupported Content-Type' }, 415);
+	}
+	const adapter = new PrismaD1(c.env.DB);
+	const prisma = new PrismaClient({ adapter });
+
+	// 型の検証
+	let json: unknown;
+	try {
+		json = await c.req.json();
+	} catch {
+		return c.json({ error: 'Invalid JSON format' }, 400);
+	}
+	const parsedJson = PageInputSchema.safeParse(json);
+
+	if (!parsedJson.success) {
+		return c.json({ error: 'Invalid request' }, 400);
+	}
+	try {
+		const body: Prisma.PageCreateInput = parsedJson.data;
+		const result = await prisma.page.create({
+			data: body,
+		});
+		return c.json(result, 200);
+	} catch (err: unknown) {
+		if (err instanceof Prisma.PrismaClientKnownRequestError) {
+			if (err.code === 'P2002') {
+				return c.json({ error: 'Contents already exists' }, 409);
 			}
 		}
-		// メソッド誤りとして返却
-		return new Response(
-			JSON.stringify({
-				error: 'Method Not Allowd',
-			}),
-			{ status: 405 }
-		);
-	},
-};
+		return c.json({ error: 'Internal Server Error' }, 500);
+	}
+});
+
+/**
+ * データベース参照
+ */
+app.get('/:pageId', async (c) => {
+	const pageId = c.req.param('pageId');
+	const adapter = new PrismaD1(c.env.DB);
+	const prisma = new PrismaClient({ adapter });
+	try {
+		const page = await prisma.page.findUnique({
+			where: { pageId: pageId },
+		});
+
+		if (!page) {
+			return c.json({ error: 'Page not found' }, 404);
+		}
+		return c.json(page);
+	} catch (err) {
+		console.error(err);
+		return c.json({ error: 'Internal Server Error' }, 500);
+	}
+});
+/**
+ * ローカルでアップロード状態を確認するためのエンドポイント
+ */
+// app.get('/image/:key{.+}', async (c) => {
+// 	const key = c.req.param('key');
+// 	const object = await c.env.BUCKET.get(key);
+// 	if (!object) return c.notFound();
+// 	return new Response(object.body, {
+// 		headers: {
+// 			'Content-Type':
+// 				object.httpMetadata?.contentType || 'application/octet-stream',
+// 		},
+// 	});
+// });
+
+export default app;

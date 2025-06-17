@@ -42,11 +42,24 @@ npx prisma migrate diff --from-empty --to-schema-datamodel ./prisma/schema.prism
 npx prisma generate
 ```
 
-
-```sh
-npx wrangler d1 migrations apply cloudflare-d1-practice --local
+マイグレーションをローカルへ適応
+```sh 
+npx wrangler d1 migrations apply cfblog-practice --local
 ```
 
+データを仮登録
+```sh
+## D1へデータ登録
+curl -H "Content-Type: application/json" -X POST -d "{\"pageId\": \"sample\", \"title\": \"sample\", \"text\": \"sampletext\", \"date\": \"2025-06-17 13:57:24\"}" http://localhost:8787/upload/post
+## R2へイメージアップロード
+curl -H "Content-Type: image/png" -X POST --data-binary @${PWD}/testimg.png  http://localhost:8787/upload/image
+```
+
+データの参照
+```sh
+## 登録したD1データベースを参照
+curl http://localhost:8787/sample
+```
 
 ## テスト
 
