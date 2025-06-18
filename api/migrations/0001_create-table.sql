@@ -35,9 +35,9 @@ CREATE TABLE "Like" (
 -- CreateTable
 CREATE TABLE "User" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
-    "userUId" TEXT NOT NULL,
+    "handle" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "token" TEXT NOT NULL
+    "hashedPassword" TEXT NOT NULL
 );
 
 -- CreateIndex
@@ -59,4 +59,4 @@ CREATE UNIQUE INDEX "Like_id_key" ON "Like"("id");
 CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_userUId_key" ON "User"("userUId");
+CREATE UNIQUE INDEX "User_handle_key" ON "User"("handle");

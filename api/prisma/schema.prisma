@@ -58,10 +58,10 @@ model Like {
 }
 
 model User {
-  id      Int    @id @unique @default(autoincrement())
-  userUId String @unique
-  name    String
+  id             Int    @id @unique @default(autoincrement())
+  handle         String @unique
+  name           String
   // 認証は別途検討のため、いったんtokenとしておく
-  token   String
-  likes   Like[]
+  hashedPassword String
+  likes          Like[]
 }

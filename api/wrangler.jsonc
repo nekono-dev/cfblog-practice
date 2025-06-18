@@ -20,9 +20,12 @@
 		{
 			"binding": "DB",
 			"database_name": "cfblog-practice",
-			"database_id": "54346605-0b8b-49ed-8c64-284271656d98"
+			"database_id": "acc378c2-bd56-4915-b0a7-9968e327001f"
 		}
-	]
+	],
+	"vars": {
+		"JWT_SECRET": "forDevelopJwdSecretKey"
+	}
 	/**
 	 * Smart Placement
 	 * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement
