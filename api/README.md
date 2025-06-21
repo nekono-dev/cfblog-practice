@@ -57,9 +57,13 @@ npx wrangler d1 migrations apply cfblog-practice --local
 ## APIを起動
 npm run dev
 ## D1へデータ登録
-curl -H "Content-Type: application/json" -X POST -d "{\"pageId\": \"sample\", \"title\": \"sample\", \"text\": \"sampletext\", \"date\": \"2025-06-17 13:57:24\"}" http://localhost:8787/upload/post
+curl -H "Content-Type: application/json" -X POST -d "{\"pageId\": \"sample\", \"title\": \"sample\", \"text\": \"sampletext\", \"date\": \"2025-06-17 13:57:24\", \"tags\": [\"hoge\"]}"  http://localhost:8787/post
+## 取得
+curl http://localhost:8787/post/sample
+
 ## R2へイメージアップロード
 curl -H "Content-Type: image/png" -X POST --data-binary @${PWD}/testimg.png  http://localhost:8787/upload/image
+## uuid bf12fdcfa28d476e975288af0f184af4.png
 ## ユーザ登録
 curl -H "Content-Type: application/json" -X POST http://localhost:8787/signup -d '{"handle": "test", "passwd": "testuser"}'
 ## ログイン

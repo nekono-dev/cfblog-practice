@@ -1,9 +1,5 @@
 import { z } from 'zod';
-import { PageSchema, UserSchema } from '../generated/zod/modelSchema';
-
-export const PageInputSchema = PageSchema.omit({ id: true }).partial({
-	imgId: true,
-});
+import { UserSchema } from '@/generated/zod/modelSchema';
 
 const PasswdSchema = z.object({
 	passwd: z.string().min(8),

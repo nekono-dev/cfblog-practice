@@ -6,18 +6,31 @@ Cloudflare Pages/D1/R2を使ったブログのユースケースプラクティ�
 
 ### コンポーネント図
 
-![components.png](.github/images/components.png)
+![components.png](.github/images/components.drawio.png)
 
 - API Endpoint: CF Workerが投稿用フォームと表示用フォームの2つの口を持つ
 - Database/Objectstorage: CF WorkerとはBindingによって疎通する
 - 表示UI: D1とはAPI Endpointを介して、R2とはR2自体のエンドポイントを介して情報取得する
 - 投稿フォーム: 執筆時点では認証は検討/実装されていない
 
+## データベース設計
+
+![dbdetail.png](.github/images/dbdetail.drawio.png)
+
+- Page: ページを管理。Likeとタグの外部キーを持つ
+    - 投稿者は管理者のみであるため、ユーザへのリレーションを持たない。
+- Tag: タグ、ページに紐づく。
+- PageTags: ページとタグの中間テーブル
+- Like: ページで投下されたユーザごとのLike
+- User: 閲覧ユーザ
+
 ### 処理フロー
+
+以下は処理フローの例である。処理内容は各種エンドポイントによる。
 
 <details><summary>ブログ投稿時の処理フロー</summary>
 
-![uploadflow.png](.github/images/uploadflow.png)
+![uploadflow.png](.github/images/uploadflow.drawio.png)
 
 - CFW処理 A: 画像を受信しR2へファイルをアップロード、キーをリスポンス
 - CFW処理 B: DB情報を受信しDBを更新、D1への書き込み結果をレスポンス
@@ -26,23 +39,12 @@ Cloudflare Pages/D1/R2を使ったブログのユースケースプラクティ�
 
 <details><summary>ブログ閲覧時の処理フロー</summary>
 
-![downloadflow.png](.github/images/downloadflow.png)
+![downloadflow.png](.github/images/downloadflow.drawio.png)
 
 - CFW処理 C: DBの何らかの識別子を元に情報をリクエスト、R2のキーを含む（または含まない）データを返却
     - R2のキーを含む場合は、表示UIはR2へリクエスト
 
 </details>
-
-## データベース設計
-
-![dbdetail.png](.github/images/dbdetail.png)
-
-- Page: ページを管理。Likeとタグの外部キーを持つ
-    - 投稿者は管理者のみであるため、ユーザへのリレーションを持たない。
-- Tag: タグ、ページに紐づく。
-- PageTags: ページとタグの中間テーブル
-- Like: ページで投下されたユーザごとのLike
-- User: 閲覧ユーザ
 
 ## セットアップ
 

@@ -1,9 +1,10 @@
-import { Hono } from 'hono';
-import { Env } from '../env';
+import { OpenAPIHono } from '@hono/zod-openapi';
+import { Env } from '@/env';
+import route from '@/models/image/get';
 
-const imageGetApp = new Hono<{ Bindings: Env }>({ strict: true });
+const imageGetApp = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
 
-imageGetApp.get('/:key{.+}', async (c) => {
+imageGetApp.openapi(route, async (c) => {
 	const key = c.req.param('key');
 	const object = await c.env.BUCKET.get(key);
 

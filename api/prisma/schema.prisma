@@ -61,7 +61,6 @@ model User {
   id             Int    @id @unique @default(autoincrement())
   handle         String @unique
   name           String
-  // 認証は別途検討のため、いったんtokenとしておく
   hashedPassword String
   likes          Like[]
 }
