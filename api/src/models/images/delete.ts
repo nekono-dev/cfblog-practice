@@ -1,19 +1,28 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { PageIdParamSchema, PageOutputSchema } from './schemas';
+import { ImageKeySchema } from './schemas';
 
 const route = createRoute({
-	path: '/{pageId}',
-	method: 'get',
-	description: 'ページ情報を取得する',
+	path: '/',
+	method: 'delete',
+	description: '画像を削除する',
 	request: {
-		params: PageIdParamSchema,
+		body: {
+			required: true,
+			content: {
+				'application/json': {
+					schema: ImageKeySchema,
+				},
+			},
+		},
 	},
 	responses: {
 		200: {
 			description: 'OK',
 			content: {
 				'application/json': {
-					schema: PageOutputSchema,
+					schema: z.object({
+						message: z.string(),
+					}),
 				},
 			},
 		},

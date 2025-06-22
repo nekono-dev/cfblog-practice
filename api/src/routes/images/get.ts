@@ -1,6 +1,6 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { Env } from '@/env';
-import route from '@/models/image/get';
+import route from '@/models/images/get';
 
 const imageGetApp = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
 

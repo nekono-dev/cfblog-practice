@@ -1,5 +1,5 @@
 import { z } from 'zod';
 
-export const ImageKeyParamSchema = z.object({
+export const ImageKeySchema = z.object({
 	key: z.string().min(1),
 });

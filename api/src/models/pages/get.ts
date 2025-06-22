@@ -1,32 +1,33 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { UserLoginInputSchema } from '../schemas';
+import { PageIdSchema, PageResSchema } from './schemas';
 
 const route = createRoute({
-	path: '/',
-	method: 'post',
-	description: 'ユーザトークンを作成する',
+	path: '/{pageId}',
+	method: 'get',
+	description: 'ページ情報を取得する',
 	request: {
-		body: {
-			required: true,
-			content: {
-				'application/json': {
-					schema: UserLoginInputSchema,
-				},
-			},
-		},
+		params: PageIdSchema,
 	},
 	responses: {
 		200: {
 			description: 'OK',
 			content: {
 				'application/json': {
+					schema: PageResSchema,
+				},
+			},
+		},
+		404: {
+			description: 'NG',
+			content: {
+				'application/json': {
 					schema: z.object({
-						token: z.string(),
+						error: z.string(),
 					}),
 				},
 			},
 		},
-		401: {
+		500: {
 			description: 'NG',
 			content: {
 				'application/json': {

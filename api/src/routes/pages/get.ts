@@ -1,7 +1,7 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { Env } from '@/env';
 import { createPrismaClient } from '@/lib/prisma';
-import route from '@/models/page/get';
+import route from '@/models/pages/get';
 
 const getApp = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
 
@@ -38,9 +38,7 @@ getApp.openapi(route, async (c) => {
 			200
 		);
 	} catch (e: unknown) {
-		if (e instanceof Error) {
-			console.log(e.message);
-		}
+		console.log(e);
 		return c.json({ error: 'Internal Server Error' }, 500);
 	}
 });

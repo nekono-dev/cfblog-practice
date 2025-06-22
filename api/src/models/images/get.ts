@@ -1,11 +1,16 @@
 import { createRoute, z } from '@hono/zod-openapi';
+import { ImageKeySchema } from './schemas';
 
 const route = createRoute({
-	path: '/',
-	method: 'put',
-	description: '画像をアップロードする',
+	path: '/{key}',
+	method: 'get',
+	description: 'デバッグ用: 画像を取得する',
 	request: {
-		body: {
+		params: ImageKeySchema,
+	},
+	responses: {
+		200: {
+			description: 'OK',
 			content: {
 				'image/png': {
 					schema: z.any().openapi({
@@ -21,30 +26,7 @@ const route = createRoute({
 				},
 			},
 		},
-	},
-	responses: {
-		200: {
-			description: 'OK',
-			content: {
-				'application/json': {
-					schema: z.object({
-						message: z.string(),
-						key: z.string(),
-					}),
-				},
-			},
-		},
-		415: {
-			description: 'NG',
-			content: {
-				'application/json': {
-					schema: z.object({
-						error: z.string(),
-					}),
-				},
-			},
-		},
-		400: {
+		404: {
 			description: 'NG',
 			content: {
 				'application/json': {

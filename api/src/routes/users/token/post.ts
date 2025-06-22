@@ -3,7 +3,7 @@ import { createPrismaClient } from '@/lib/prisma';
 import { comparePassword } from '@/lib/bcrypt';
 import { Env } from '@/env';
 import { OpenAPIHono } from '@hono/zod-openapi';
-import route from '@/models/user/token/post';
+import route from '@/models/users/token/post';
 
 const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
 
@@ -28,7 +28,7 @@ app.openapi(route, async (c) => {
 		c.env.JWT_SECRET,
 		'HS256'
 	);
-	return c.json({ token: token }, 200);
+	return c.json({ token: token }, 201);
 });
 
 export default app;

@@ -1,15 +1,22 @@
 import { z } from 'zod';
 import { PageSchema } from '@/generated/zod/modelSchema';
 
-export const PageIdParamSchema = z.object({
+export const PageIdSchema = z.object({
 	pageId: z.string().min(1),
 });
 
-export const PageOutputSchema = PageSchema.extend({
+export const PageIdOptionsSchema = PageIdSchema.extend({
+	option: z.object({
+		deleteImage: z.boolean().optional()
+	})
+});
+
+
+export const PageResSchema = PageSchema.extend({
 	tags: z.string().array(),
 });
 
-export const PageInputSchema = PageSchema.omit({
+export const PageReqSchema = PageSchema.omit({
 	id: true,
 })
 	.partial({

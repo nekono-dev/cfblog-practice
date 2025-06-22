@@ -5,8 +5,8 @@ const PasswdSchema = z.object({
 	passwd: z.string().min(8),
 });
 
-export const UserLoginInputSchema = UserSchema.omit({
+export const UserReqSchema = UserSchema.omit({
 	id: true,
-	name: true,
+	handle: true,
 	hashedPassword: true,
 }).merge(PasswdSchema);

@@ -1,6 +1,6 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { Env } from '@/env';
-import route from '@/models/image/put';
+import route from '@/models/images/put';
 
 const imageApp = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
 
@@ -19,7 +19,7 @@ imageApp.openapi(route, async (c) => {
 	const filename = `${crypto.randomUUID().replace(/-/g, '')}.${extension}`;
 	await c.env.BUCKET.put(filename, body, { httpMetadata: { contentType } });
 
-	return c.json({ message: 'Image uploaded', key: filename }, 200);
+	return c.json({ message: 'Image uploaded', key: filename }, 201);
 });
 
 export default imageApp;

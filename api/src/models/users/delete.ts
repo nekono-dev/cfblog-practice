@@ -1,22 +1,22 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { PageInputSchema } from './schemas';
+import { UserReqSchema } from './schemas';
 
 const route = createRoute({
 	path: '/',
-	method: 'post',
-	description: 'ページに情報を書き込む',
+	method: 'delete',
+	description: 'ユーザを削除する',
 	request: {
 		body: {
 			required: true,
 			content: {
 				'application/json': {
-					schema: PageInputSchema,
+					schema: UserReqSchema,
 				},
 			},
 		},
 	},
 	responses: {
-		201: {
+		204: {
 			description: 'OK',
 			content: {
 				'application/json': {
@@ -26,7 +26,7 @@ const route = createRoute({
 				},
 			},
 		},
-		500: {
+		400: {
 			description: 'NG',
 			content: {
 				'application/json': {

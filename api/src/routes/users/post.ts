@@ -2,16 +2,12 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import { Env } from '@/env';
 import { createPrismaClient } from '@/lib/prisma';
 import { hashPassword } from '@/lib/bcrypt';
-import route from '@/models/user/post';
+import route from '@/models/users/post';
 
 const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
 
 app.openapi(route, async (c) => {
-	// Jsonのinputだった場合のエラー
-	const parsed = c.req.valid('json');
-
-	const handle = parsed.handle;
-	const passwd = parsed.passwd;
+	const { handle, passwd } = c.req.valid('json');
 
 	// clientの作成
 	const prisma = createPrismaClient(c.env);

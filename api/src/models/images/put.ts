@@ -1,16 +1,23 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { UserLoginInputSchema } from './schemas';
 
 const route = createRoute({
 	path: '/',
-	method: 'post',
-	description: 'ユーザを登録する',
+	method: 'put',
+	description: '画像をアップロードする',
 	request: {
 		body: {
-			required: true,
 			content: {
-				'application/json': {
-					schema: UserLoginInputSchema,
+				'image/png': {
+					schema: z.any().openapi({
+						type: 'string',
+						format: 'binary',
+					}),
+				},
+				'image/jpeg': {
+					schema: z.any().openapi({
+						type: 'string',
+						format: 'binary',
+					}),
 				},
 			},
 		},
@@ -22,6 +29,17 @@ const route = createRoute({
 				'application/json': {
 					schema: z.object({
 						message: z.string(),
+						key: z.string(),
+					}),
+				},
+			},
+		},
+		415: {
+			description: 'NG',
+			content: {
+				'application/json': {
+					schema: z.object({
+						error: z.string(),
 					}),
 				},
 			},
