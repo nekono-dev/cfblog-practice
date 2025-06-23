@@ -20,9 +20,13 @@ const route = createRoute({
 			description: 'OK',
 			content: {
 				'application/json': {
-					schema: z.object({
-						message: z.string(),
-					}),
+					schema: z
+						.object({
+							message: z.string(),
+						})
+						.openapi({
+							example: { message: 'Page created' },
+						}),
 				},
 			},
 		},
@@ -30,9 +34,13 @@ const route = createRoute({
 			description: 'NG',
 			content: {
 				'application/json': {
-					schema: z.object({
-						error: z.string(),
-					}),
+					schema: z
+						.object({
+							error: z.string(),
+						})
+						.openapi({
+							example: { error: 'Internal Server Error' },
+						}),
 				},
 			},
 		},

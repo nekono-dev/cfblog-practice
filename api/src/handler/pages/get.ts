@@ -27,7 +27,6 @@ app.openapi(route, async (c) => {
 		const tags = page.PageTags.map((pt) => pt.tag.label);
 		return c.json(
 			{
-				id: page.id,
 				pageId: page.pageId,
 				title: page.title,
 				text: page.text,

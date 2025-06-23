@@ -27,10 +27,17 @@ const route = createRoute({
 			description: 'OK',
 			content: {
 				'application/json': {
-					schema: z.object({
-						message: z.string(),
-						key: z.string(),
-					}),
+					schema: z
+						.object({
+							message: z.string(),
+							key: z.string(),
+						})
+						.openapi({
+							example: {
+								message: 'Image uploaded',
+								key: 'XXXXXXX-YYYYYY.png',
+							},
+						}),
 				},
 			},
 		},
@@ -38,9 +45,13 @@ const route = createRoute({
 			description: 'NG',
 			content: {
 				'application/json': {
-					schema: z.object({
-						error: z.string(),
-					}),
+					schema: z
+						.object({
+							error: z.string(),
+						})
+						.openapi({
+							example: { error: 'Unsupported Content-Type' },
+						}),
 				},
 			},
 		},
@@ -48,9 +59,13 @@ const route = createRoute({
 			description: 'NG',
 			content: {
 				'application/json': {
-					schema: z.object({
-						error: z.string(),
-					}),
+					schema: z
+						.object({
+							error: z.string(),
+						})
+						.openapi({
+							example: { error: 'Uploaded image is empty' },
+						}),
 				},
 			},
 		},

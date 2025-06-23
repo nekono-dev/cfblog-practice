@@ -7,12 +7,13 @@ export const PageIdSchema = z.object({
 
 export const PageIdOptionsSchema = PageIdSchema.extend({
 	option: z.object({
-		deleteImage: z.boolean().optional()
-	})
+		deleteImage: z.boolean().optional(),
+	}),
 });
 
-
-export const PageResSchema = PageSchema.extend({
+export const PageResSchema = PageSchema.omit({
+	id: true,
+}).extend({
 	tags: z.string().array(),
 });
 

@@ -13,7 +13,16 @@ const route = createRoute({
 			description: 'OK',
 			content: {
 				'application/json': {
-					schema: PageResSchema,
+					schema: PageResSchema.openapi({
+						example: {
+							pageId: 'page-id',
+							date: new Date('2025-01-02 00:00:00'),
+							title: 'sample-page',
+							text: 'sample page content',
+							imgId: 'XXXXXX-YYYYY.jpg',
+							tags: ['tag1'],
+						},
+					}),
 				},
 			},
 		},
@@ -21,9 +30,13 @@ const route = createRoute({
 			description: 'NG',
 			content: {
 				'application/json': {
-					schema: z.object({
-						error: z.string(),
-					}),
+					schema: z
+						.object({
+							error: z.string(),
+						})
+						.openapi({
+							example: { error: 'Page not found' },
+						}),
 				},
 			},
 		},
@@ -31,9 +44,13 @@ const route = createRoute({
 			description: 'NG',
 			content: {
 				'application/json': {
-					schema: z.object({
-						error: z.string(),
-					}),
+					schema: z
+						.object({
+							error: z.string(),
+						})
+						.openapi({
+							example: { error: 'Internal Server Error' },
+						}),
 				},
 			},
 		},

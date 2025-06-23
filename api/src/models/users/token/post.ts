@@ -20,9 +20,13 @@ const route = createRoute({
 			description: 'OK',
 			content: {
 				'application/json': {
-					schema: z.object({
-						token: z.string(),
-					}),
+					schema: z
+						.object({
+							token: z.string(),
+						})
+						.openapi({
+							example: { token: 'XXXXXXXXXXXXX.XXXXXXXXXXX.XXXXXXX' },
+						}),
 				},
 			},
 		},
@@ -30,9 +34,13 @@ const route = createRoute({
 			description: 'NG',
 			content: {
 				'application/json': {
-					schema: z.object({
-						error: z.string(),
-					}),
+					schema: z
+						.object({
+							error: z.string(),
+						})
+						.openapi({
+							example: { error: 'Invalid credentials' },
+						}),
 				},
 			},
 		},
