@@ -60,6 +60,9 @@ npm run dev
 curl -H "Content-Type: application/json" -X POST -d "{\"pageId\": \"sample\", \"title\": \"sample\", \"text\": \"sampletext\", \"date\": \"2025-06-17 13:57:24\", \"tags\": [\"hoge\"]}"  http://localhost:8787/post
 ## 取得
 curl http://localhost:8787/post/sample
+## ページ削除
+curl -H "Content-Type: application/json" -X DELETE -d "{\"pageId\": \"sample\", \"option\": {\"deleteImage\": true}}" http://localhost:8787/post
+
 
 ## R2へイメージアップロード
 curl -H "Content-Type: image/png" -X POST --data-binary @${PWD}/testimg.png  http://localhost:8787/upload/image

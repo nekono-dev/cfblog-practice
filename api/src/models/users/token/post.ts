@@ -1,5 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { UserReqSchema } from '../schemas';
+import { UserPasswordReqSchema } from '@/schemas/users';
 
 const route = createRoute({
 	path: '/',
@@ -10,7 +10,7 @@ const route = createRoute({
 			required: true,
 			content: {
 				'application/json': {
-					schema: UserReqSchema,
+					schema: UserPasswordReqSchema,
 				},
 			},
 		},

@@ -1,5 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { ImageKeySchema } from './schemas';
+import { ImageKeySchema } from '@/schemas/images';
 
 const route = createRoute({
 	path: '/',

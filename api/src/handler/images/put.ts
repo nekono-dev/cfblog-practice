@@ -2,9 +2,9 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import { Env } from '@/env';
 import route from '@/models/images/put';
 
-const imageApp = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
+const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
 
-imageApp.openapi(route, async (c) => {
+app.openapi(route, async (c) => {
 	const contentType = c.req.header('Content-Type');
 	if (!contentType || !contentType.startsWith('image/')) {
 		return c.json({ error: 'Unsupported Content-Type' }, 415);
@@ -22,4 +22,4 @@ imageApp.openapi(route, async (c) => {
 	return c.json({ message: 'Image uploaded', key: filename }, 201);
 });
 
-export default imageApp;
+export default app;

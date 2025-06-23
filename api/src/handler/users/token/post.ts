@@ -1,8 +1,8 @@
+import { OpenAPIHono } from '@hono/zod-openapi';
+import { Env } from '@/env';
 import { sign } from 'hono/jwt';
 import { createPrismaClient } from '@/lib/prisma';
 import { comparePassword } from '@/lib/bcrypt';
-import { Env } from '@/env';
-import { OpenAPIHono } from '@hono/zod-openapi';
 import route from '@/models/users/token/post';
 
 const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });

@@ -1,19 +1,27 @@
-import { Hono } from 'hono';
-import imageUpload from './routes/image/put';
-import postUpload from './routes/page/post';
-import getPage from './routes/page/get';
-import createUser from './routes/user/post';
-import authUser from './routes/user/token/post';
-import getProfile from './routes/getProfile';
-import getImage from './routes/image/get';
+import { OpenAPIHono } from '@hono/zod-openapi';
+import { Env } from '@/env';
 
-const app = new Hono();
-app.route('/post', postUpload);
-app.route('/post', getPage);
-app.route('/user', createUser);
-app.route('/user', getProfile);
-app.route('/user/token', authUser);
-app.route('/image', imageUpload);
-// app.route('/image', getImage); // 画像取得エンドポイント
+import imagesApi from './models/images';
+import usersApi from './models/users';
+import pagessApi from './models/pages';
+
+import { swaggerUI } from '@hono/swagger-ui';
+
+const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
+
+app.route('/pages', pagessApi);
+app.route('/images', imagesApi);
+app.route('/users', usersApi);
+
+// APIドキュメントを出力
+app
+	.doc('/openapi.json', {
+		openapi: '3.0.0',
+		info: {
+			title: 'Cfblog-practice API',
+			version: '1.0.0',
+		},
+	})
+	.get('/docs', swaggerUI({ url: '/openapi.json' }));
 
 export default app;

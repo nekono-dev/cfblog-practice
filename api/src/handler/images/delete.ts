@@ -2,9 +2,9 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import { Env } from '@/env';
 import route from '@/models/images/delete';
 
-const imageApp = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
+const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
 
-imageApp.openapi(route, async (c) => {
+app.openapi(route, async (c) => {
 	const { key } = c.req.valid('json');
 	const object = await c.env.BUCKET.get(key);
 	if (!object) {
@@ -20,4 +20,4 @@ imageApp.openapi(route, async (c) => {
 	return c.json({ message: 'Image deleted' }, 200);
 });
 
-export default imageApp;
+export default app;

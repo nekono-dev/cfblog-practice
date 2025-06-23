@@ -1,5 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { PageIdOptionsSchema } from './schemas';
+import { PageIdOptionsSchema } from '@/schemas/pages';
 
 const route = createRoute({
 	path: '/',

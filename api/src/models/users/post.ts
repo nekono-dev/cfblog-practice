@@ -1,5 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { UserReqSchema } from './schemas';
+import { UserPasswordReqSchema } from '@/schemas/users';
 
 const route = createRoute({
 	path: '/',
@@ -10,7 +10,7 @@ const route = createRoute({
 			required: true,
 			content: {
 				'application/json': {
-					schema: UserReqSchema,
+					schema: UserPasswordReqSchema,
 				},
 			},
 		},
@@ -20,9 +20,13 @@ const route = createRoute({
 			description: 'OK',
 			content: {
 				'application/json': {
-					schema: z.object({
-						message: z.string(),
-					}),
+					schema: z
+						.object({
+							message: z.string(),
+						})
+						.openapi({
+							example: { message: 'User created' },
+						}),
 				},
 			},
 		},
@@ -30,9 +34,13 @@ const route = createRoute({
 			description: 'NG',
 			content: {
 				'application/json': {
-					schema: z.object({
-						error: z.string(),
-					}),
+					schema: z
+						.object({
+							error: z.string(),
+						})
+						.openapi({
+							example: { error: 'Handle already in use' },
+						}),
 				},
 			},
 		},

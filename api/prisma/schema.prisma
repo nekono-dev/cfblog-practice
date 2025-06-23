@@ -58,9 +58,10 @@ model Like {
 }
 
 model User {
-  id             Int    @id @unique @default(autoincrement())
-  handle         String @unique
+  id             Int      @id @unique @default(autoincrement())
+  handle         String   @unique
   name           String
   hashedPassword String
+  birthday       DateTime?
   likes          Like[]
 }

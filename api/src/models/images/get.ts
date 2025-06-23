@@ -1,5 +1,5 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { ImageKeySchema } from './schemas';
+import { ImageKeySchema } from '@/schemas/images';
 
 const route = createRoute({
 	path: '/{key}',
@@ -14,14 +14,14 @@ const route = createRoute({
 			content: {
 				'image/png': {
 					schema: z.any().openapi({
-						type: 'string',
 						format: 'binary',
+						example: '<png binary stream>',
 					}),
 				},
 				'image/jpeg': {
 					schema: z.any().openapi({
-						type: 'string',
 						format: 'binary',
+						example: '<jpeg binary stream>',
 					}),
 				},
 			},

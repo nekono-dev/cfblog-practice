@@ -3,9 +3,9 @@ import { Env } from '@/env';
 import { createPrismaClient } from '@/lib/prisma';
 import route from '@/models/pages/get';
 
-const getApp = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
+const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
 
-getApp.openapi(route, async (c) => {
+app.openapi(route, async (c) => {
 	const { pageId } = c.req.valid('param');
 	const prisma = createPrismaClient(c.env);
 	try {
@@ -43,4 +43,4 @@ getApp.openapi(route, async (c) => {
 	}
 });
 
-export default getApp;
+export default app;
