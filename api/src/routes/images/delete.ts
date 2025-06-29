@@ -1,7 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 const route = createRoute({
-  path: '/',
+  path: '/images',
   method: 'delete',
   description: '画像を削除する',
   request: {

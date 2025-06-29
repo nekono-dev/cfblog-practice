@@ -1,7 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 const route = createRoute({
-  path: '/',
+  path: '/pages',
   method: 'delete',
   description: 'ページに情報を書き込む',
   request: {

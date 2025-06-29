@@ -102,3 +102,20 @@ npx wrangler d1 migrations apply cfblog-practice --local
 ```
 
 ## テスト
+
+開発サーバを起動しておく
+```sh
+npm run dev
+```
+
+テストの実行
+```sh
+npm run test
+```
+
+
+### 本番構築
+
+```sh
+npx wrangler secret put JWT_SECRET
+```

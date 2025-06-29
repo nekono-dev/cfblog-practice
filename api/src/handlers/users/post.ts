@@ -15,7 +15,6 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
 
   // パスワードをハッシュ化
   const hashedPassword = hashPassword(passwd);
-  console.log(hashedPassword);
   // ユーザ登録
   await prisma.user.create({
     data: {

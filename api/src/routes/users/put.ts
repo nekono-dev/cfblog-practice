@@ -12,8 +12,8 @@ const route = createRoute({
           schema: z.object({
             passwd: z.string().min(8).optional(),
             handle: z.string().min(8),
-            name: z.string(),
-            birthday: z.string().refine((val) => !isNaN(Date.parse(val))),
+            name: z.string().optional(),
+            birthday: z.coerce.date(),
           }),
         },
       },
@@ -29,7 +29,7 @@ const route = createRoute({
               message: z.string(),
             })
             .openapi({
-              example: { message: 'User created' },
+              example: { message: 'User updated' },
             }),
         },
       },

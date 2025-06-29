@@ -1,12 +1,12 @@
 import { RouteHandler } from '@hono/zod-openapi';
 import { Env } from '@/common/env';
 import { createPrismaClient } from '@/lib/prisma';
-import { hashPassword } from '@/lib/bcrypt';
+import { comparePassword, hashPassword } from '@/lib/bcrypt';
 import route from '@/routes/users/delete';
 
 const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const { passwd } = c.req.valid('json');
-  
+
   const jwtPayload = c.get('jwtPayload') as { sub: string };
   const handle = jwtPayload.sub;
 
@@ -16,9 +16,8 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const user = await prisma.user.findUnique({ where: { handle: handle } });
   if (!user) return c.json({ error: 'User not found' }, 404);
 
-  // body中のパスワード情報と、tokenを基に取得したユーザに紐づくhashedPasswordが一致する場合、本人であると判断する
-  const hashedPassword = hashPassword(passwd);
-  if (user.hashedPassword !== hashedPassword) {
+  const valid = comparePassword(passwd, user.hashedPassword);
+  if (!valid) {
     return c.json({ error: 'Authorization failed' }, 401);
   }
 

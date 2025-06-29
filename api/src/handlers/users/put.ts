@@ -19,7 +19,7 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const existing = await prisma.user.findUnique({
     where: { handle },
   });
-  if (existing) return c.json({ error: 'Handle already in use' }, 404);
+  if (!existing) return c.json({ error: 'User not found' }, 404);
   const data = removeUndefined(parsed);
   await prisma.user.update({
     where: { handle: handle },
@@ -27,7 +27,7 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   });
   await prisma.$disconnect();
 
-  return c.json({ message: 'User created' }, 201);
+  return c.json({ message: 'User updated' }, 201);
 };
 
 export default handler;

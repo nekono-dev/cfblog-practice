@@ -1,5 +1,5 @@
 import { defineWorkersConfig } from '@cloudflare/vitest-pool-workers/config';
-import * as path from 'path'
+import * as path from 'path';
 
 export default defineWorkersConfig({
   test: {
@@ -8,10 +8,11 @@ export default defineWorkersConfig({
         wrangler: {
           configPath: './wrangler.jsonc',
         },
+        main: './src/index.ts',
       },
     },
     alias: {
-      "@": path.resolve(__dirname, "./src"),
+      '@': path.resolve(__dirname, './src'),
     },
   },
 });
