@@ -1,63 +1,74 @@
-import { OpenAPIHono } from '@hono/zod-openapi';
+import { RouteHandler } from '@hono/zod-openapi';
 import { Env } from '@/common/env';
 import { createPrismaClient } from '@/lib/prisma';
-import route from '@/api/v1/pages/post';
+import route from '@/routes/pages/post';
 
-const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
-
-app.openapi(route, async (c) => {
+const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
+  const jwtPayload = c.get('jwtPayload') as { sub: string };
   const prisma = createPrismaClient(c.env);
 
-  const { pageId, title, text, imgId, date, tags } = c.req.valid('json');
+  // 👇 Role ではなく User 自身の writeAble を参照
+  const user = await prisma.user.findUnique({
+    where: { handle: jwtPayload.sub },
+    select: {
+      writeAble: true,
+    },
+  });
+
+  if (!user?.writeAble) {
+    return c.json({ error: 'Method Not Allowed' }, 405);
+  }
+
+  const parsed = c.req.valid('json');
+  if (!parsed) {
+    return c.json({ error: 'Invalid request' }, 400);
+  }
 
   try {
-    // 1. 既存タグを一括取得
+    // 1回目 R: 既存タグを取得（重複作成防止）
     const existingTags = await prisma.tag.findMany({
-      where: { label: { in: tags } },
+      where: { label: { in: parsed.tags } },
       select: { id: true, label: true },
     });
 
-    const existingLabels = new Set(existingTags.map((t) => t.label));
-    const newLabels = tags.filter((label) => !existingLabels.has(label));
+    const existingLabelSet = new Set(existingTags.map((t) => t.label));
+    const newLabels = parsed.tags.filter(
+      (label) => !existingLabelSet.has(label)
+    );
 
-    // 2. 新規タグを一括作成（必要があれば）
-    const createTags = newLabels.map((label) => ({ label }));
+    // 2回目 W: 新規タグを必要に応じて作成
+    if (newLabels.length > 0) {
+      await prisma.tag.createMany({
+        data: newLabels.map((label) => ({ label })),
+      });
+    }
 
-    // 3. トランザクションでまとめて処理
-    const [createdTags, page] = await prisma.$transaction([
-      prisma.tag.createMany({ data: createTags }),
-      prisma.page.create({
-        data: {
-          pageId,
-          title,
-          text,
-          imgId,
-          date,
-        },
-      }),
-    ]);
-
-    // 4. 全タグIDを取得（既存 + 新規）
+    // 3回目 R: 最終的な全タグIDを取得（connect用）
     const allTags = await prisma.tag.findMany({
-      where: { label: { in: tags } },
+      where: { label: { in: parsed.tags } },
       select: { id: true },
     });
 
-    // 5. 中間テーブルを一括作成
-    await prisma.pageTags.createMany({
-      data: allTags.map((tag) => ({
-        pageId: page.id,
-        tagId: tag.id,
-      })),
+    // 4回目 W: ページを作成し、同時にタグをconnect
+    await prisma.page.create({
+      data: {
+        pageId: parsed.pageId,
+        title: parsed.title,
+        text: parsed.text,
+        imgId: parsed.imgId,
+        date: parsed.date,
+        tags: {
+          connect: allTags.map((tag) => ({ id: tag.id })),
+        },
+      },
     });
-
     return c.json({ message: 'Page created' }, 201);
   } catch (e: any) {
-    console.log(e);
+    console.error(e);
     return c.json({ error: 'Internal Server Error' }, 500);
   } finally {
     await prisma.$disconnect();
   }
-});
+};
 
-export default app;
+export default handler;

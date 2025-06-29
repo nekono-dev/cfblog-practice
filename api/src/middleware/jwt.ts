@@ -1,12 +1,10 @@
-import type { Context } from 'hono';
 import { verify } from 'hono/jwt';
-import { MiddlewareHandler } from 'hono';
+import { createMiddleware } from 'hono/factory';
 import { Env } from '../common/env';
 
-export const jwtMiddleware: MiddlewareHandler = async (
-  c: Context<{ Bindings: Env }>,
-  next,
-) => {
+export const jwtMiddleware = createMiddleware<{
+  Bindings: Env;
+}>(async (c, next) => {
   const token = c.req.header('Authorization')?.replace('Bearer ', '');
   if (!token) return c.json({ error: 'Unauthorized' }, 401);
   try {
@@ -17,4 +15,4 @@ export const jwtMiddleware: MiddlewareHandler = async (
     console.log(e);
     return c.json({ error: 'Invalid token' }, 401);
   }
-};
+});

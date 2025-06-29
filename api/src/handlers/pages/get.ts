@@ -1,30 +1,29 @@
-import { OpenAPIHono } from '@hono/zod-openapi';
+import { RouteHandler } from '@hono/zod-openapi';
 import { Env } from '@/common/env';
 import { createPrismaClient } from '@/lib/prisma';
-import route from '@/api/v1/pages/get';
+import route from '@/routes/pages/get';
 
-const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
-
-app.openapi(route, async (c) => {
+const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const { pageId } = c.req.valid('param');
   const prisma = createPrismaClient(c.env);
   try {
     const page = await prisma.page.findUnique({
       where: { pageId },
       include: {
-        PageTags: {
-          include: {
-            tag: true,
-          },
+        tags: {
+          select: { label: true },
         },
       },
     });
+    await prisma.$disconnect();
 
     if (!page) {
       return c.json({ error: 'Page not found' }, 404);
     }
-    // タグのラベルのみ出力
-    const tags = page.PageTags.map((pt) => pt.tag.label);
+
+    // タグのラベルのみ抽出
+    const tags = page.tags.map((tag) => tag.label);
+
     return c.json(
       {
         pageId: page.pageId,
@@ -34,12 +33,14 @@ app.openapi(route, async (c) => {
         date: page.date,
         tags,
       },
-      200,
+      200
     );
   } catch (e: unknown) {
-    console.log(e);
+    console.error(e);
     return c.json({ error: 'Internal Server Error' }, 500);
+  } finally {
+    await prisma.$disconnect();
   }
-});
+};
 
-export default app;
+export default handler;

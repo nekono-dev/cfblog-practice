@@ -1,13 +1,20 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 const route = createRoute({
-  path: '/{pageId}',
-  method: 'get',
-  description: 'ページ情報を取得する',
+  path: '/users',
+  method: 'delete',
+  description: 'ユーザを削除する',
   request: {
-    params: z.object({
-      pageId: z.string().min(1),
-    }),
+    body: {
+      required: true,
+      content: {
+        'application/json': {
+          schema: z.object({
+            passwd: z.string().min(8),
+          }),
+        },
+      },
+    },
   },
   responses: {
     200: {
@@ -16,22 +23,24 @@ const route = createRoute({
         'application/json': {
           schema: z
             .object({
-              pageId: z.string(),
-              title: z.string(),
-              text: z.string().nullable(),
-              imgId: z.string().nullable(),
-              tags: z.string().array(),
-              date: z.coerce.date(),
+              message: z.string(),
             })
             .openapi({
-              example: {
-                pageId: 'page-id',
-                date: new Date('2025-01-02 00:00:00'),
-                title: 'sample-page',
-                text: 'sample page content',
-                imgId: 'XXXXXX-YYYYY.jpg',
-                tags: ['tag1'],
-              },
+              example: { message: 'User deleted' },
+            }),
+        },
+      },
+    },
+    400: {
+      description: 'NG',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              error: z.string(),
+            })
+            .openapi({
+              example: { error: 'Invalid request' },
             }),
         },
       },
@@ -45,12 +54,12 @@ const route = createRoute({
               error: z.string(),
             })
             .openapi({
-              example: { error: 'Page not found' },
+              example: { error: 'User not found' },
             }),
         },
       },
     },
-    500: {
+    401: {
       description: 'NG',
       content: {
         'application/json': {
@@ -59,7 +68,7 @@ const route = createRoute({
               error: z.string(),
             })
             .openapi({
-              example: { error: 'Internal Server Error' },
+              example: { error: 'Authorization failed' },
             }),
         },
       },

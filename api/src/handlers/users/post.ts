@@ -1,24 +1,21 @@
-import { OpenAPIHono } from '@hono/zod-openapi';
+import { RouteHandler } from '@hono/zod-openapi';
 import { Env } from '@/common/env';
 import { createPrismaClient } from '@/lib/prisma';
 import { hashPassword } from '@/lib/bcrypt';
-import route from '@/api/v1/users/post';
+import route from '@/routes/users/post';
 
-const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
-
-app.openapi(route, async (c) => {
+const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const { handle, passwd } = c.req.valid('json');
-
   // clientの作成
   const prisma = createPrismaClient(c.env);
 
   // すでにユーザがいるか確認
   const existing = await prisma.user.findUnique({ where: { handle } });
-  if (existing) return c.json({ error: 'Handle already in use' }, 400);
+  if (existing) return c.json({ error: 'Handle already in use' }, 403);
 
   // パスワードをハッシュ化
   const hashedPassword = hashPassword(passwd);
-
+  console.log(hashedPassword);
   // ユーザ登録
   await prisma.user.create({
     data: {
@@ -27,8 +24,8 @@ app.openapi(route, async (c) => {
       hashedPassword,
     },
   });
-
+  await prisma.$disconnect();
   return c.json({ message: 'User created' }, 201);
-});
+};
 
-export default app;
+export default handler;

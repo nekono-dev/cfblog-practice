@@ -1,19 +1,14 @@
-import { OpenAPIHono } from '@hono/zod-openapi';
+import { RouteHandler } from '@hono/zod-openapi';
 import { Env } from '@/common/env';
 import { createPrismaClient } from '@/lib/prisma';
 import { hashPassword } from '@/lib/bcrypt';
-import route from '@/api/v1/users/delete';
-import { jwtMiddleware } from '@/middleware/jwt';
+import route from '@/routes/users/delete';
 
-const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
-// トークンで認証したうえで、パスワード情報を取得
-app.use('*', jwtMiddleware);
-
-app.openapi(route, async (c) => {
+const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const { passwd } = c.req.valid('json');
-
-  const payload = c.get('jwtPayload') as { sub: string };
-  const handle = payload.sub;
+  
+  const jwtPayload = c.get('jwtPayload') as { sub: string };
+  const handle = jwtPayload.sub;
 
   // clientの作成
   const prisma = createPrismaClient(c.env);
@@ -24,7 +19,7 @@ app.openapi(route, async (c) => {
   // body中のパスワード情報と、tokenを基に取得したユーザに紐づくhashedPasswordが一致する場合、本人であると判断する
   const hashedPassword = hashPassword(passwd);
   if (user.hashedPassword !== hashedPassword) {
-    return c.json({ error: 'Authorization failed' }, 503);
+    return c.json({ error: 'Authorization failed' }, 401);
   }
 
   // ユーザ削除
@@ -32,8 +27,8 @@ app.openapi(route, async (c) => {
     prisma.like.deleteMany({ where: { id: user.id } }),
     prisma.user.delete({ where: { id: user.id } }),
   ]);
-
+  await prisma.$disconnect();
   return c.json({ message: 'User deleted' }, 200);
-});
+};
 
-export default app;
+export default handler;

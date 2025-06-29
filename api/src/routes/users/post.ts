@@ -1,21 +1,23 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 const route = createRoute({
-  path: '/',
-  method: 'delete',
-  description: '画像を削除する',
+  path: '/users',
+  method: 'post',
+  description: 'ユーザを登録する',
   request: {
     body: {
-      required: true,
       content: {
         'application/json': {
-          schema: z.object({ key: z.string() }),
+          schema: z.object({
+            passwd: z.string().min(8),
+            handle: z.string().min(8),
+          }),
         },
       },
     },
   },
   responses: {
-    200: {
+    201: {
       description: 'OK',
       content: {
         'application/json': {
@@ -24,14 +26,12 @@ const route = createRoute({
               message: z.string(),
             })
             .openapi({
-              example: {
-                message: 'Image deleted',
-              },
+              example: { message: 'User created' },
             }),
         },
       },
     },
-    404: {
+    400: {
       description: 'NG',
       content: {
         'application/json': {
@@ -40,14 +40,12 @@ const route = createRoute({
               error: z.string(),
             })
             .openapi({
-              example: {
-                error: 'Image not found',
-              },
+              example: { error: 'Invalid request' },
             }),
         },
       },
     },
-    500: {
+    403: {
       description: 'NG',
       content: {
         'application/json': {
@@ -56,9 +54,7 @@ const route = createRoute({
               error: z.string(),
             })
             .openapi({
-              example: {
-                error: 'Internal Server Error',
-              },
+              example: { error: 'Handle already in use' },
             }),
         },
       },

@@ -33,6 +33,12 @@ npx wrangler login
 
 ## 構築
 
+### バケットの作成
+
+```sh
+npx wrangler r2 bucket create cfblog-practice
+```
+
 ### データベース作成
 
 ```sh

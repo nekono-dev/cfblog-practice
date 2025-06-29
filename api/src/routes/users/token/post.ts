@@ -1,21 +1,17 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 const route = createRoute({
-  path: '/',
+  path: '/users/token',
   method: 'post',
-  description: 'ページに情報を書き込む',
+  description: 'ユーザトークンを作成する',
   request: {
     body: {
       required: true,
       content: {
         'application/json': {
           schema: z.object({
-            pageId: z.string(),
-            title: z.string(),
-            text: z.string().nullable(),
-            imgId: z.string().nullable().optional(),
-            tags: z.string().array(),
-            date: z.coerce.date(),
+            passwd: z.string().min(5),
+            handle: z.string().min(1),
           }),
         },
       },
@@ -28,15 +24,17 @@ const route = createRoute({
         'application/json': {
           schema: z
             .object({
-              message: z.string(),
+              token: z.string(),
             })
             .openapi({
-              example: { message: 'Page created' },
+              example: {
+                token: 'XXXXXXXXXXXXX.XXXXXXXXXXX.XXXXXXX',
+              },
             }),
         },
       },
     },
-    500: {
+    400: {
       description: 'NG',
       content: {
         'application/json': {
@@ -45,12 +43,25 @@ const route = createRoute({
               error: z.string(),
             })
             .openapi({
-              example: { error: 'Internal Server Error' },
+              example: { error: 'Invalid request' },
+            }),
+        },
+      },
+    },
+    401: {
+      description: 'NG',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              error: z.string(),
+            })
+            .openapi({
+              example: { error: 'Invalid credentials' },
             }),
         },
       },
     },
   },
 });
-
 export default route;

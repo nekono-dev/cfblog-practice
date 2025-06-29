@@ -1,17 +1,19 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 const route = createRoute({
-  path: '/',
-  method: 'post',
-  description: 'ユーザを登録する',
+  path: '/users',
+  method: 'put',
+  description: 'ユーザ情報を更新する',
   request: {
     body: {
       required: true,
       content: {
         'application/json': {
           schema: z.object({
-            passwd: z.string().min(8),
+            passwd: z.string().min(8).optional(),
             handle: z.string().min(8),
+            name: z.string(),
+            birthday: z.string().refine((val) => !isNaN(Date.parse(val))),
           }),
         },
       },
@@ -41,7 +43,21 @@ const route = createRoute({
               error: z.string(),
             })
             .openapi({
-              example: { error: 'Handle already in use' },
+              example: { error: 'Invalid request' },
+            }),
+        },
+      },
+    },
+    404: {
+      description: 'NG',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              error: z.string(),
+            })
+            .openapi({
+              example: { error: 'Invalid request' },
             }),
         },
       },

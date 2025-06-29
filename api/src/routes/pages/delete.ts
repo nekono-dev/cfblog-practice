@@ -2,55 +2,34 @@ import { createRoute, z } from '@hono/zod-openapi';
 
 const route = createRoute({
   path: '/',
-  method: 'put',
-  description: '画像をアップロードする',
+  method: 'delete',
+  description: 'ページに情報を書き込む',
   request: {
     body: {
+      required: true,
       content: {
-        'image/png': {
-          schema: z.any().openapi({
-            type: 'string',
-            format: 'binary',
-          }),
-        },
-        'image/jpeg': {
-          schema: z.any().openapi({
-            type: 'string',
-            format: 'binary',
+        'application/json': {
+          schema: z.object({
+            pageId: z.string().min(1),
+            option: z.object({
+              deleteImage: z.boolean().optional(),
+            }),
           }),
         },
       },
     },
   },
   responses: {
-    201: {
+    200: {
       description: 'OK',
       content: {
         'application/json': {
           schema: z
             .object({
               message: z.string(),
-              key: z.string(),
             })
             .openapi({
-              example: {
-                message: 'Image uploaded',
-                key: 'XXXXXXX-YYYYYY.png',
-              },
-            }),
-        },
-      },
-    },
-    415: {
-      description: 'NG',
-      content: {
-        'application/json': {
-          schema: z
-            .object({
-              error: z.string(),
-            })
-            .openapi({
-              example: { error: 'Unsupported Content-Type' },
+              example: { message: 'Page deleted' },
             }),
         },
       },
@@ -64,7 +43,35 @@ const route = createRoute({
               error: z.string(),
             })
             .openapi({
-              example: { error: 'Uploaded image is empty' },
+              example: { error: 'Invalid request' },
+            }),
+        },
+      },
+    },
+    404: {
+      description: 'NG',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              error: z.string(),
+            })
+            .openapi({
+              example: { error: 'Page not found' },
+            }),
+        },
+      },
+    },
+    500: {
+      description: 'NG',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              error: z.string(),
+            })
+            .openapi({
+              example: { error: 'Internal Server Error' },
             }),
         },
       },

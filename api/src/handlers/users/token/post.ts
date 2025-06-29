@@ -1,13 +1,11 @@
-import { OpenAPIHono } from '@hono/zod-openapi';
-import { Env } from '@/common/env';
-import { sign } from 'hono/jwt';
+import { RouteHandler } from '@hono/zod-openapi';
 import { createPrismaClient } from '@/lib/prisma';
+import { Env } from '@/common/env';
 import { comparePassword } from '@/lib/bcrypt';
-import route from '@/api/v1/users/token/post';
+import { sign } from 'hono/jwt';
+import route from '@/routes/users/token/post';
 
-const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
-
-app.openapi(route, async (c) => {
+const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   // Jsonのinputだった場合のエラー
   const parsed = c.req.valid('json');
 
@@ -26,9 +24,9 @@ app.openapi(route, async (c) => {
   const token = await sign(
     { sub: user.handle, exp: Math.floor(Date.now() / 1000) + 60 * 60 },
     c.env.JWT_SECRET,
-    'HS256',
+    'HS256'
   );
   return c.json({ token: token }, 201);
-});
+};
 
-export default app;
+export default handler;

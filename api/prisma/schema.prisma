@@ -1,18 +1,8 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
-
 generator client {
   provider        = "prisma-client-js"
   output          = "../src/generated/prisma"
   previewFeatures = ["driverAdapters"]
 }
-
-// generator zod {
-//   provider          = "zod-prisma-types"
-//   useMultipleFiles  = true // 各モデルを別ファイルに生成
-//   useTypeAssertions = true // 型アサーション使用
-//   output            = "../src/generated/zod"
-// }
 
 datasource db {
   provider = "sqlite"
@@ -20,41 +10,31 @@ datasource db {
 }
 
 model Page {
-  id       Int        @id @unique @default(autoincrement())
-  pageId   String     @unique
-  title    String
-  text     String?
-  imgId    String?
-  // 1ページには複数タグがつく、タグ一つには複数ページつく
-  // 多対多なので、PageTags中間テーブルを作成する
-  PageTags PageTags[]
-  likes    Like[]
-  date     DateTime
+  id             Int      @id @unique @default(autoincrement())
+  pageId         String   @unique
+  title          String
+  text           String?
+  imgId          String?
+  date           DateTime
+  isPublic       Boolean  @default(true)
+  likes          Like[]
+  tags           Tag[]    @relation("PageTags")
+  visibleToUsers User[]   @relation("UserPageVisibility")
 }
 
 model Tag {
-  id       Int        @id @unique @default(autoincrement())
-  label    String     @unique
-  // 中間テーブルを定義
-  PageTags PageTags[]
-}
-
-model PageTags {
-  page   Page @relation(fields: [pageId], references: [id])
-  tag    Tag  @relation(fields: [tagId], references: [id])
-  pageId Int
-  tagId  Int
-
-  @@id([pageId, tagId]) // 複合主キー（多対多）
+  id    Int    @id @unique @default(autoincrement())
+  label String @unique
+  pages Page[] @relation("PageTags")
 }
 
 model Like {
-  id    Int  @id @unique @default(autoincrement())
-  count Int
-  // 外部キーとしてlikeIdを指定、userIdとの中間テーブルを作成
-  user  User @relation(fields: [id], references: [id])
-  // 外部キーとして
-  page  Page @relation(fields: [id], references: [id])
+  id     Int  @id @unique @default(autoincrement())
+  count  Int
+  page   Page @relation(fields: [pageId], references: [id])
+  pageId Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
 }
 
 model User {
@@ -63,5 +43,7 @@ model User {
   name           String
   hashedPassword String
   birthday       DateTime?
+  writeAble      Boolean   @default(false)
   likes          Like[]
+  visiblePages   Page[]    @relation("UserPageVisibility")
 }

@@ -1,17 +1,24 @@
 import { OpenAPIHono } from '@hono/zod-openapi';
 import { Env } from '@/common/env';
-
-import imagesApi from './routes/images';
-import usersApi from './routes/users';
-import pagessApi from './routes/pages';
-
 import { swaggerUI } from '@hono/swagger-ui';
+// APIs
+import { imagesPublicRouter, imagesProtectedRouter } from '@/routes/images';
+import { pagesPublicRouter, pagesProtectedRouter } from '@/routes/pages';
+import { usersPublicRouter, usersProtectedRouter } from '@/routes/users';
 
 const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
 
-app.route('/pages', pagessApi);
-app.route('/images', imagesApi);
-app.route('/users', usersApi);
+// 同じrouteになるとmiddlewareが上書きされるため、意図的に変更する必要あり
+app
+  .basePath('/s')
+  .route('/', imagesProtectedRouter)
+  .route('/', pagesProtectedRouter)
+  .route('/', usersProtectedRouter);
+
+app
+  .route('/', imagesPublicRouter)
+  .route('/', pagesPublicRouter)
+  .route('/', usersPublicRouter);
 
 // APIドキュメントを出力
 app
@@ -22,6 +29,6 @@ app
       version: '1.0.0',
     },
   })
-  .get('/docs', swaggerUI({ url: '/openapi.json' }));
+  .get('/doc', swaggerUI({ url: '/openapi.json' }));
 
 export default app;

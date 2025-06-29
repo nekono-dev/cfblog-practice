@@ -1,34 +1,38 @@
 import { createRoute, z } from '@hono/zod-openapi';
-import { AuthorizationSchema } from '@/common/schemas';
 
 const route = createRoute({
-  path: '/',
-  method: 'delete',
-  description: 'ユーザを削除する',
+  path: '/users/{handle}',
+  method: 'get',
+  description: 'ユーザプロフィールを表示',
   request: {
-    body: {
-      required: true,
-      content: {
-        'application/json': {
-          schema: z.object({
-            passwd: z.string().min(8),
-          }),
-        },
-      },
-    },
-    headers: AuthorizationSchema,
+    required: true,
+    params: z.object({
+      handle: z.string().min(1),
+    }),
   },
   responses: {
     200: {
       description: 'OK',
       content: {
         'application/json': {
+          schema: z.object({
+            handle: z.string(),
+            name: z.string(),
+            birthday: z.coerce.date().nullable().optional(),
+          }),
+        },
+      },
+    },
+    400: {
+      description: 'NG',
+      content: {
+        'application/json': {
           schema: z
             .object({
-              message: z.string(),
+              error: z.string(),
             })
             .openapi({
-              example: { message: 'User deleted' },
+              example: { error: 'Invalid request' },
             }),
         },
       },
@@ -47,21 +51,6 @@ const route = createRoute({
         },
       },
     },
-    503: {
-      description: 'NG',
-      content: {
-        'application/json': {
-          schema: z
-            .object({
-              error: z.string(),
-            })
-            .openapi({
-              example: { error: 'Authorization failed' },
-            }),
-        },
-      },
-    },
   },
 });
-
 export default route;

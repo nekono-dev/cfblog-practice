@@ -3,15 +3,21 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "deploy": "wrangler deploy",
+    "deploy": "wrangler deploy --minify",
     "dev": "wrangler dev",
     "start": "wrangler dev",
     "test": "vitest",
-    "cf-typegen": "wrangler types"
+    "cf-typegen": "wrangler types",
+    "seed": "wrangler d1 execute cfblog-practice --file=./prisma/seed.sql"
+  },
+  "prisma": {
+    "schema": "prisma/schema.prisma"
   },
   "devDependencies": {
     "@cloudflare/vitest-pool-workers": "^0.8.19",
     "@types/bcryptjs": "^2.4.6",
+    "@types/node": "^24.0.7",
+    "path": "^0.12.7",
     "prisma": "^6.10.0",
     "typescript": "^5.5.2",
     "vitest": "~3.2.0",
@@ -20,10 +26,11 @@
   "dependencies": {
     "@hono/swagger-ui": "^0.5.2",
     "@hono/zod-openapi": "^0.19.8",
+    "@hono/zod-validator": "^0.7.0",
     "@prisma/adapter-d1": "^6.9.0",
     "@prisma/client": "^6.10.0",
     "bcryptjs": "^3.0.2",
-    "hono": "^4.7.11",
+    "hono": "^4.8.3",
     "zod": "^3.25.67",
     "zod-prisma-types": "^3.2.4"
   }

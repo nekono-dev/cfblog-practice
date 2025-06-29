@@ -8,24 +8,24 @@
   "main": "src/index.ts",
   "compatibility_date": "2025-06-14",
   "observability": {
-    "enabled": true,
+    "enabled": true
   },
   "r2_buckets": [
     {
       "binding": "BUCKET",
-      "bucket_name": "cfblog-practice",
-    },
+      "bucket_name": "cfblog-practice"
+    }
   ],
   "d1_databases": [
     {
       "binding": "DB",
       "database_name": "cfblog-practice",
-      "database_id": "acc378c2-bd56-4915-b0a7-9968e327001f",
-    },
+      "database_id": "83d8ba4b-9615-43fc-b500-9375dabfed7b"
+    }
   ],
   "vars": {
-    "JWT_SECRET": "forDevelopJwdSecretKey",
-  },
+    "JWT_SECRET": "forDevelopJwdSecretKey"
+  }
   /**
    * Smart Placement
    * Docs: https://developers.cloudflare.com/workers/configuration/smart-placement/#smart-placement

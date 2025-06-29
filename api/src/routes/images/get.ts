@@ -5,6 +5,7 @@ const route = createRoute({
   method: 'get',
   description: 'デバッグ用: 画像を取得する',
   request: {
+    required: true,
     params: z.object({ key: z.string() }),
   },
   responses: {
