@@ -1,0 +1,115 @@
+// import { SELF, env } from 'cloudflare:test';
+import { describe, it, expect } from 'vitest';
+import { z } from 'zod';
+
+describe('Page control Senario test', () => {
+  let adminToken: string;
+  it('[Positive] Get Admin token', async () => {
+    const response = await fetch('http://localhost:8787/users/token', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+      },
+      body: JSON.stringify({
+        handle: 'admin',
+        passwd: 'admin',
+      }),
+    });
+    const apiResult = await response.json();
+    expect(apiResult).toHaveProperty('token');
+    adminToken = z.object({ token: z.string() }).parse(apiResult).token;
+    console.log('[pageSenario|log] Admin Token: ' + adminToken);
+  });
+
+  let imageKey: string;
+  const imageUint8Array = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
+  it('[Positive] Post New Image', async () => {
+    const response = await fetch('http://localhost:8787/s/images', {
+      method: 'PUT',
+      headers: {
+        'Content-type': 'image/png',
+        Authorization: 'Bearer ' + adminToken,
+      },
+      body: imageUint8Array,
+    });
+    const apiResult = await response.json();
+    expect(apiResult).toHaveProperty('key');
+    imageKey = z.object({ key: z.string() }).parse(apiResult).key;
+    console.log('[pageSenario|log] Image key: ' + imageKey);
+  });
+  // 投稿したイメージが存在し、投稿前と同一であること
+  it('[Positive] Get Posted Image', async () => {
+    const response = await fetch('http://localhost:8787/images/' + imageKey, {
+      method: 'GET',
+    });
+    const apiResult = await response.arrayBuffer();
+    expect(apiResult).toStrictEqual(imageUint8Array.buffer);
+  });
+  const testPageId = 'testpage';
+  it('[Positive] Post New Page', async () => {
+    const response = await fetch('http://localhost:8787/s/pages', {
+      method: 'POST',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: 'Bearer ' + adminToken,
+      },
+      body: JSON.stringify({
+        pageId: testPageId,
+        title: 'TestPage',
+        text: 'TestText',
+        tags: ['test'],
+        date: '2000-01-01',
+        imgId: imageKey,
+      }),
+    });
+    const apiResult = await response.json();
+    expect(apiResult).toMatchObject({
+      message: 'Page created',
+    });
+  });
+  it('[Positive] Get Created Page', async () => {
+    const response = await fetch('http://localhost:8787/pages/' + testPageId, {
+      method: 'GET',
+    });
+    const apiResult = await response.json();
+    expect(apiResult).toMatchObject({
+      pageId: testPageId,
+      title: 'TestPage',
+      text: 'TestText',
+      imgId: imageKey,
+      tags: ['test'],
+      date: '2000-01-01T00:00:00.000Z',
+    });
+    console.log('[pageSenario|log] ' + testPageId + ' :' + JSON.stringify(apiResult));
+  });
+  it('[Positive] Delete Created Page with Image', async () => {
+    const response = await fetch('http://localhost:8787/s/pages', {
+      method: 'DELETE',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: 'Bearer ' + adminToken,
+      },
+      body: JSON.stringify({
+        pageId: testPageId,
+        option: {
+          deleteImage: true,
+        },
+      }),
+    });
+    const apiResult = await response.json();
+    expect(apiResult).toMatchObject({
+      message: 'Page deleted',
+    });
+  });
+  // Imageが削除されていること
+  it('[Negative] Image already deleted by page deletion', async () => {
+    const response = await fetch('http://localhost:8787/images/' + imageKey, {
+      method: 'GET',
+    });
+    const apiResult = await response.json();
+    expect(apiResult).toMatchObject({
+      error: 'Image not found',
+    });
+    console.log('[pageSenario|log] ' + imageKey + ' not found');
+  });
+});

@@ -6,7 +6,7 @@ import route from '@/routes/pages/delete';
 const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const prisma = createPrismaClient(c.env);
   const parsed = c.req.valid('json');
-
+  console.log(parsed);
   try {
     const page = await prisma.page.findUnique({
       where: { pageId: parsed.pageId },
@@ -15,7 +15,6 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
     if (!page) {
       return c.json({ error: 'Page not found' }, 404);
     }
-
     // imgが存在し、同時削除するフラグがある場合
     if (page.imgId && parsed.option.deleteImage === true) {
       await c.env.BUCKET.delete(page.imgId);

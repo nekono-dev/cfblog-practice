@@ -38,7 +38,7 @@ describe('User Control test', () => {
     const apiResult = await response.json();
     expect(apiResult).toHaveProperty('token');
     userToken = z.object({ token: z.string() }).parse(apiResult).token;
-    console.log('[log] User Token: ' + userToken);
+    console.log('[user|log] User Token: ' + userToken);
   });
 
   it('[Positive] Update User Profile', async () => {
@@ -77,7 +77,7 @@ describe('User Control test', () => {
       name: testUserName,
       birthday: '2000-01-01T00:00:00.000Z',
     });
-    console.log('[log] User Profile: ' + JSON.stringify(apiResult));
+    console.log('[user|log] User Profile: ' + JSON.stringify(apiResult));
   });
 
   it('[Positive] Get Other User Profile', async () => {

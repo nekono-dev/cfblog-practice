@@ -40,46 +40,6 @@ describe('Admin Control test', () => {
       name: adminName,
       birthday: '1900-01-01T00:00:00.000Z',
     });
-    console.log('[log] Admin Profile: ' + JSON.stringify(apiResult));
-  });
-
-  const testPageId = 'testpage';
-  it('[Positive] Post New Page', async () => {
-    const response = await fetch('http://localhost:8787/s/pages', {
-      method: 'POST',
-      headers: {
-        'Content-type': 'application/json',
-        Authorization: 'Bearer ' + adminToken,
-      },
-      body: JSON.stringify({
-        pageId: testPageId,
-        title: 'TestPage',
-        text: 'TestText',
-        tags: ['test'],
-        date: '2000-01-01',
-      }),
-    });
-    const apiResult = await response.json();
-    expect(apiResult).toMatchObject({
-      message: 'Page created',
-    });
-  });
-  it('[Positive] Get Created Page', async () => {
-    const response = await fetch('http://localhost:8787/pages/' + testPageId, {
-      method: 'GET',
-      headers: {
-        'Content-type': 'application/json',
-      },
-    });
-    const apiResult = await response.json();
-    expect(apiResult).toMatchObject({
-      pageId: testPageId,
-      title: 'TestPage',
-      text: 'TestText',
-      imgId: null,
-      tags: ['test'],
-      date: '2000-01-01T00:00:00.000Z',
-    });
-    console.log('[log] ' + testPageId + ' :' + JSON.stringify(apiResult));
+    console.log('[admin|log] Admin Profile: ' + JSON.stringify(apiResult));
   });
 });

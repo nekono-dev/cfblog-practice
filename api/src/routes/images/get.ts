@@ -1,7 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 const route = createRoute({
-  path: '/{key}',
+  path: '/images/{key}',
   method: 'get',
   description: 'デバッグ用: 画像を取得する',
   request: {
