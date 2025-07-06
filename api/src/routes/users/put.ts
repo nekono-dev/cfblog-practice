@@ -3,7 +3,8 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   path: '/users',
   method: 'put',
-  description: 'ユーザ情報を更新する',
+  description: 'Update user profile information. Only specified fields will be changed.',
+  tags: ["users"],
   security: [{ Bearer: [] }],
   request: {
     body: {
@@ -12,9 +13,9 @@ const route = createRoute({
         'application/json': {
           schema: z.object({
             passwd: z.string().min(8).optional(),
-            handle: z.string().min(8).optional(),
+            handle: z.string().min(5).optional(),
             name: z.string().optional(),
-            birthday: z.coerce.date(),
+            birthday: z.coerce.date().optional(),
           }),
         },
       },
@@ -22,7 +23,7 @@ const route = createRoute({
   },
   responses: {
     201: {
-      description: 'OK',
+      description: 'User profile updated successfully',
       content: {
         'application/json': {
           schema: z
@@ -36,7 +37,7 @@ const route = createRoute({
       },
     },
     404: {
-      description: 'NG',
+      description: 'User not found or invalid credentials',
       content: {
         'application/json': {
           schema: z
@@ -50,7 +51,7 @@ const route = createRoute({
       },
     },
     409: {
-      description: 'NG',
+      description: 'Handle already in use',
       content: {
         'application/json': {
           schema: z
@@ -64,7 +65,7 @@ const route = createRoute({
       },
     },
     500: {
-      description: 'NG',
+      description: 'Internal server error',
       content: {
         'application/json': {
           schema: z

@@ -3,15 +3,16 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   path: '/users/token',
   method: 'post',
-  description: 'ユーザトークンを作成する',
+  description: 'Generate an authentication token using user credentials.',
+  tags: ["users"],
   request: {
     body: {
       required: true,
       content: {
         'application/json': {
           schema: z.object({
-            passwd: z.string().min(5),
-            handle: z.string().min(1),
+            passwd: z.string().min(8),
+            handle: z.string().min(5),
           }),
         },
       },
@@ -19,7 +20,7 @@ const route = createRoute({
   },
   responses: {
     201: {
-      description: 'OK',
+      description: 'Authentication token issued',
       content: {
         'application/json': {
           schema: z
@@ -35,7 +36,7 @@ const route = createRoute({
       },
     },
     400: {
-      description: 'NG',
+      description: 'Missing or invalid input',
       content: {
         'application/json': {
           schema: z
@@ -49,7 +50,7 @@ const route = createRoute({
       },
     },
     401: {
-      description: 'NG',
+      description: 'Incorrect credentials',
       content: {
         'application/json': {
           schema: z
@@ -63,7 +64,7 @@ const route = createRoute({
       },
     },
     403: {
-      description: 'NG',
+      description: 'Login not permitted',
       content: {
         'application/json': {
           schema: z

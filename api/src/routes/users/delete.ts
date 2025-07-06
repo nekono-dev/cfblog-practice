@@ -3,7 +3,8 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   path: '/users',
   method: 'delete',
-  description: 'ユーザを削除する',
+  description: 'Delete an existing user account after verifying credentials.',
+  tags: ["users"],
   security: [{ Bearer: [] }],
   request: {
     body: {
@@ -19,7 +20,7 @@ const route = createRoute({
   },
   responses: {
     200: {
-      description: 'OK',
+      description: 'User account deleted successfully',
       content: {
         'application/json': {
           schema: z
@@ -32,36 +33,8 @@ const route = createRoute({
         },
       },
     },
-    400: {
-      description: 'NG',
-      content: {
-        'application/json': {
-          schema: z
-            .object({
-              error: z.string(),
-            })
-            .openapi({
-              example: { error: 'Invalid request' },
-            }),
-        },
-      },
-    },
-    404: {
-      description: 'NG',
-      content: {
-        'application/json': {
-          schema: z
-            .object({
-              error: z.string(),
-            })
-            .openapi({
-              example: { error: 'User not found' },
-            }),
-        },
-      },
-    },
     401: {
-      description: 'NG',
+      description: 'Authorization failed',
       content: {
         'application/json': {
           schema: z

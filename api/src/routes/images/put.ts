@@ -3,7 +3,7 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   path: '/images',
   method: 'put',
-  description: '画像をアップロードする',
+  description: 'Upload a PNG or JPEG image to the server.',
   security: [{ Bearer: [] }],
   request: {
     body: {
@@ -26,7 +26,7 @@ const route = createRoute({
   },
   responses: {
     201: {
-      description: 'OK',
+      description: 'Image uploaded successfully',
       content: {
         'application/json': {
           schema: z
@@ -43,22 +43,8 @@ const route = createRoute({
         },
       },
     },
-    415: {
-      description: 'NG',
-      content: {
-        'application/json': {
-          schema: z
-            .object({
-              error: z.string(),
-            })
-            .openapi({
-              example: { error: 'Unsupported Content-Type' },
-            }),
-        },
-      },
-    },
     400: {
-      description: 'NG',
+      description: 'Uploaded image is empty or invalid',
       content: {
         'application/json': {
           schema: z
@@ -67,6 +53,20 @@ const route = createRoute({
             })
             .openapi({
               example: { error: 'Uploaded image is empty' },
+            }),
+        },
+      },
+    },
+    415: {
+      description: 'Unsupported media type',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              error: z.string(),
+            })
+            .openapi({
+              example: { error: 'Unsupported Content-Type' },
             }),
         },
       },

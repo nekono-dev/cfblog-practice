@@ -2,11 +2,9 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
 import { usersPrivURL, usersTokenURL } from './urls';
+import { adminHandle, adminPasswd, adminName } from './param';
 
 describe('Admin Control test', () => {
-  const adminHandle = 'admin';
-  const adminName = 'Administrator';
-
   let adminToken: string;
   it('[Positive] Get Admin token', async () => {
     const response = await fetch(usersTokenURL, {
@@ -15,8 +13,8 @@ describe('Admin Control test', () => {
         'Content-type': 'application/json',
       },
       body: JSON.stringify({
-        handle: 'admin',
-        passwd: 'admin',
+        handle: adminHandle,
+        passwd: adminPasswd,
       }),
     });
     const apiResult = await response.json();

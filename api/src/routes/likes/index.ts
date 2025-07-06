@@ -10,7 +10,9 @@ export const likesAccessibleRouter = createOpenApiHono<{ Bindings: Env }>();
 likesAccessibleRouter.openapi(likePutRoute, likePutHandler);
 
 // public
+import likeGetRoute from '@/routes/likes/get';
+import likeGetHandler from '@/handlers/likes/get';
 
-// export const pagesPublicRouter = createOpenApiHono<{ Bindings: Env }>();
+export const likesPublicRouter = createOpenApiHono<{ Bindings: Env }>();
 
-// pagesPublicRouter.openapi(, );
+// likesPublicRouter.openapi(likeGetRoute, likeGetHandler);

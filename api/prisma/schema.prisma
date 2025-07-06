@@ -10,21 +10,31 @@ datasource db {
 }
 
 model Page {
-  id       Int      @id @unique @default(autoincrement())
-  pageId   String   @unique
+  id       Int       @id @unique @default(autoincrement())
+  pageId   String    @unique
   title    String
   text     String?
   imgId    String?
   date     DateTime
   likes    Like[]
-  tags     Tag[]    @relation("PageTags")
-  isPublic Boolean  @default(true)
+  tags     PageTag[]
+  isPublic Boolean   @default(true)
 }
 
 model Tag {
-  id    Int    @id @unique @default(autoincrement())
-  label String @unique
-  pages Page[] @relation("PageTags")
+  id    Int       @id @unique @default(autoincrement())
+  label String    @unique
+  pages PageTag[]
+}
+
+model PageTag {
+  id     Int  @id @default(autoincrement())
+  page   Page @relation(fields: [pageId], references: [id])
+  pageId Int
+  tag    Tag  @relation(fields: [tagId], references: [id])
+  tagId  Int
+
+  @@unique([pageId, tagId])
 }
 
 model Like {

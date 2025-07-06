@@ -3,14 +3,15 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   path: '/images/{key}',
   method: 'get',
-  description: 'デバッグ用: 画像を取得する',
+  description: 'Fetch an image by its key.',
+  tags: ["images"],
   request: {
     required: true,
     params: z.object({ key: z.string() }),
   },
   responses: {
     200: {
-      description: 'OK',
+      description: 'Image retrieved successfully',
       content: {
         'image/png': {
           schema: z.any().openapi({
@@ -27,7 +28,7 @@ const route = createRoute({
       },
     },
     404: {
-      description: 'NG',
+      description: 'Image not found',
       content: {
         'application/json': {
           schema: z

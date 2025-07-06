@@ -5,9 +5,10 @@ import { swaggerUI } from '@hono/swagger-ui';
 import { imagesPublicRouter, imagesRestrictedRouter } from '@/routes/images';
 import { pagesPublicRouter, pagesRestrictedRouter } from '@/routes/pages';
 import { usersPublicRouter, usersRestrictedRouter } from '@/routes/users';
-import { likesAccessibleRouter } from './routes/likes';
+import { likesAccessibleRouter, likesPublicRouter } from './routes/likes';
 
 import { jwtMiddleware, jwtOptional } from './middleware/jwt';
+import { tagsPublicRouter } from './routes/tags';
 
 const app = new OpenAPIHono<{ Bindings: Env }>({ strict: false });
 
@@ -19,6 +20,7 @@ app
       title: 'Cfblog-practice API',
       version: '1.0.0',
     },
+    
   })
   .get('/doc', swaggerUI({ url: '/openapi.json' }));
 
@@ -27,10 +29,12 @@ app
 app
   .route('/', imagesPublicRouter)
   .route('/', pagesPublicRouter)
-  .route('/', usersPublicRouter);
+  .route('/', usersPublicRouter)
+  .route('/', likesPublicRouter)
+  .route("/", tagsPublicRouter);
 app
-  .use("*",jwtOptional)
-  .route("/", likesAccessibleRouter)
+  .use('*', jwtOptional)
+  .route('/', likesAccessibleRouter);
 app
   .use('*', jwtMiddleware)
   .route('/', imagesRestrictedRouter)

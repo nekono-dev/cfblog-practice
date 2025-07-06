@@ -6,23 +6,26 @@ import route from '@/routes/pages/get';
 const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const { pageId } = c.req.valid('param');
   const prisma = createPrismaClient(c.env);
+
   try {
     const page = await prisma.page.findUnique({
       where: { pageId },
       include: {
         tags: {
-          select: { label: true },
+          select: {
+            tag: {
+              select: { label: true },
+            },
+          },
         },
       },
     });
-    await prisma.$disconnect();
 
     if (!page) {
       return c.json({ error: 'Page not found' }, 404);
     }
 
-    // タグのラベルのみ抽出
-    const tags = page.tags.map((tag) => tag.label);
+    const tags = page.tags.map((pt) => pt.tag.label);
 
     return c.json(
       {
@@ -38,8 +41,6 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   } catch (e: unknown) {
     console.error(e);
     return c.json({ error: 'Internal Server Error' }, 500);
-  } finally {
-    await prisma.$disconnect();
   }
 };
 

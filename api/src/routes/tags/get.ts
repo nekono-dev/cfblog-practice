@@ -4,6 +4,7 @@ const route = createRoute({
   method: 'get',
   path: '/tags/{label}',
   description: 'Get public page list for a given tag label',
+  tags: ["tags"],
   request: {
     params: z.object({
       label: z.string(),
@@ -11,7 +12,7 @@ const route = createRoute({
   },
   responses: {
     200: {
-      description: 'List of pages with the given tag label',
+      description: 'Public pages matching the tag retrieved successfully',
       content: {
         'application/json': {
           schema: z.object({
@@ -30,7 +31,7 @@ const route = createRoute({
       },
     },
     404: {
-      description: 'Tag not found or no public pages',
+      description: 'No public pages found for the given tag',
       content: {
         'application/json': {
           schema: z.object({
@@ -42,7 +43,7 @@ const route = createRoute({
       },
     },
     500: {
-      description: 'Tag not found or no public pages',
+      description: 'Internal server error while retrieving tag data',
       content: {
         'application/json': {
           schema: z.object({

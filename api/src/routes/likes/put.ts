@@ -3,7 +3,8 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   method: 'put',
   path: '/likes',
-  description: 'Likeを追加する',
+  description: 'Add like(s) to a specific page.',
+  tags: ["likes"],
   security: [{ Bearer: [] }],
   request: {
     body: {
@@ -20,7 +21,7 @@ const route = createRoute({
   },
   responses: {
     200: {
-      description: 'Like registered successfully',
+      description: 'Like count updated successfully',
       content: {
         'application/json': {
           schema: z.object({
@@ -30,7 +31,7 @@ const route = createRoute({
       },
     },
     400: {
-      description: 'Invalid request',
+      description: 'Invalid request data',
       content: {
         'application/json': {
           schema: z.object({
@@ -40,7 +41,7 @@ const route = createRoute({
       },
     },
     404: {
-      description: 'Resource not found',
+      description: 'User or page not found',
       content: {
         'application/json': {
           schema: z.object({

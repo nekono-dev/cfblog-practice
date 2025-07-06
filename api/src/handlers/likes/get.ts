@@ -24,12 +24,10 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
 
     const total = result._sum.count ?? 0;
 
-    return c.json({ pageId, totalLikes: total }, 200);
+    return c.json({ count: total }, 200);
   } catch (e: any) {
     console.error(e);
     return c.json({ error: 'Internal Server Error' }, 500);
-  } finally {
-    await prisma.$disconnect();
   }
 };
 

@@ -6,11 +6,12 @@ import {
   imagesURL,
   pagesPrivURL,
   pagesURL,
-  usersPrivURL,
   usersTokenURL,
 } from './urls';
 
-describe('Page control Senario test', () => {
+import { adminHandle, adminPasswd } from './param';
+
+describe('Page Control Senario test', () => {
   let adminToken: string;
   it('[Positive] Get Admin token', async () => {
     const response = await fetch(usersTokenURL, {
@@ -19,14 +20,14 @@ describe('Page control Senario test', () => {
         'Content-type': 'application/json',
       },
       body: JSON.stringify({
-        handle: 'admin',
-        passwd: 'admin',
+        handle: adminHandle,
+        passwd: adminPasswd,
       }),
     });
     const apiResult = await response.json();
     expect(apiResult).toHaveProperty('token');
     adminToken = z.object({ token: z.string() }).parse(apiResult).token;
-    console.log('[pageSenario|log] Admin Token: ' + adminToken);
+    console.log('[pageControlSenario] Admin Token: ' + adminToken);
   });
 
   let imageKey: string;
@@ -43,7 +44,7 @@ describe('Page control Senario test', () => {
     const apiResult = await response.json();
     expect(apiResult).toHaveProperty('key');
     imageKey = z.object({ key: z.string() }).parse(apiResult).key;
-    console.log('[pageSenario|log] Image key: ' + imageKey);
+    console.log('[pageControlSenario] Image key: ' + imageKey);
   });
   // 投稿したイメージが存在し、投稿前と同一であること
   it('[Positive] Get Posted Image', async () => {
@@ -89,7 +90,7 @@ describe('Page control Senario test', () => {
       date: '2000-01-01T00:00:00.000Z',
     });
     console.log(
-      '[pageSenario|log] ' + testPageId + ' :' + JSON.stringify(apiResult)
+      '[pageControlSenario] ' + testPageId + ' :' + JSON.stringify(apiResult)
     );
   });
   it('[Positive] Delete Created Page with Image', async () => {
@@ -100,7 +101,7 @@ describe('Page control Senario test', () => {
         Authorization: 'Bearer ' + adminToken,
       },
       body: JSON.stringify({
-        pageId: testPageId,
+        pageId: [testPageId],
         option: {
           deleteImage: true,
         },
@@ -120,6 +121,6 @@ describe('Page control Senario test', () => {
     expect(apiResult).toMatchObject({
       error: 'Image not found',
     });
-    console.log('[pageSenario|log] ' + imageKey + ' not found');
+    console.log('[pageControlSenario] ' + imageKey + ' not found');
   });
 });

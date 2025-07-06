@@ -3,7 +3,8 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   method: 'get',
   path: '/likes/{pageId}',
-  description: 'Get total like count for a page',
+  description: 'Get total like count for the specified page.',
+  tags: ["likes"],
   request: {
     required: true,
     params: z.object({
@@ -16,8 +17,7 @@ const route = createRoute({
       content: {
         'application/json': {
           schema: z.object({
-            pageId: z.string(),
-            totalLikes: z.number().openapi({ example: 42 }),
+            count: z.number().openapi({ example: 42 }),
           }),
         },
       },

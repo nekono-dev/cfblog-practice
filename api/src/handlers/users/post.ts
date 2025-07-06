@@ -23,7 +23,6 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
       hashedPassword,
     },
   });
-  await prisma.$disconnect();
   return c.json({ message: 'User created' }, 201);
 };
 

@@ -3,14 +3,15 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   path: '/users',
   method: 'post',
-  description: 'ユーザを登録する',
+  description: 'Register a new user with a handle and password.',
+  tags: ["users"],
   request: {
     body: {
       content: {
         'application/json': {
           schema: z.object({
             passwd: z.string().min(8),
-            handle: z.string().min(8),
+            handle: z.string().min(5),
           }),
         },
       },
@@ -18,7 +19,7 @@ const route = createRoute({
   },
   responses: {
     201: {
-      description: 'OK',
+      description: 'User created successfully',
       content: {
         'application/json': {
           schema: z
@@ -32,7 +33,7 @@ const route = createRoute({
       },
     },
     400: {
-      description: 'NG',
+      description: 'Invalid input',
       content: {
         'application/json': {
           schema: z
@@ -46,7 +47,7 @@ const route = createRoute({
       },
     },
     403: {
-      description: 'NG',
+      description: 'Handle already in use',
       content: {
         'application/json': {
           schema: z

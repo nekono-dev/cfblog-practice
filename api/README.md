@@ -4,10 +4,10 @@
 
 ```
 $ node -v
-v22.16.0
+v22.17.0
 $ npx wrangler -v
 
- ⛅️ wrangler 4.20.0
+ ⛅️ wrangler 4.23.0
 ───────────────────
 ```
 
@@ -19,7 +19,7 @@ $ npx wrangler -v
 npm install
 ```
 
-### Cloudflareと連携
+### Cloudflare と連携
 
 デスクトップ環境にて、以下を実行
 
@@ -31,7 +31,7 @@ npx wrangler login
 
 ## 操作方法
 
-### R2バケット
+### R2 バケット
 
 #### 作成方法
 
@@ -45,7 +45,7 @@ npx wrangler r2 bucket create cfblog-practice
 npx wrangler r2 bucket delete cfblog-practice
 ```
 
-### D1データベース
+### D1 データベース
 
 #### 作成方法
 
@@ -62,7 +62,7 @@ npx prisma generate
 npx wrangler d1 migrations apply cfblog-practice --local
 ```
 
-#### seedの作成
+#### seed の作成
 
 ```sh
 npm run seed
@@ -76,16 +76,18 @@ https://www.prisma.io/docs/orm/overview/databases/cloudflare-d1#3-generate-sql-s
 
 ```sh
 ## 定義の更新
-npx prisma generate 
+npx prisma generate
+## マイグレーションの名称
+MIGRATION_NAME=define-new-table
 ## マイグレーションを作成
-npx wrangler d1 migrations create cfblog-practice update-table
+npx wrangler d1 migrations create cfblog-practice ${MIGRATION_NAME}
 ## 作成したマイグレーションへprismaで書き込み
 npx prisma migrate diff --from-local-d1 --to-schema-datamodel ./prisma/schema.prisma --script --output migrations/<SQLファイル>
 ## マイグレーションを適応
 npx wrangler d1 migrations apply cfblog-practice --local
 ```
 
-#### D1データベース削除
+#### D1 データベース削除
 
 ```sh
 ## d1のリストを取得
@@ -94,53 +96,60 @@ npx wrangler d1 list
 npx wrangler d1 delete cfblog-practice
 ```
 
-
-### API操作
+### API 操作
 
 データを仮登録
 
 ```sh
 ## APIを起動
 npm run dev
-## ログイン
+## トークンを発行
 curl -H "Content-Type: application/json" -X POST http://localhost:8787/user/admin -d '{"handle": "admin", "passwd": "admin"}'
 
 ## D1へデータ登録
 curl -H "Authorization: Bearer <token>" -H "Content-Type: application/json" -X POST -d "{\"pageId\": \"sample\", \"title\": \"sample\", \"text\": \"sampletext\", \"date\": \"2025-06-17 13:57:24\", \"tags\": [\"hoge\"]}"  http://localhost:8787/pages
 ## 取得
 curl http://localhost:8787/pages/sample
-
-## R2へイメージアップロード
-curl -H "Content-Type: image/png" -X POST --data-binary @${PWD}/testimg.png  http://localhost:8787/upload/image
-## uuid bf12fdcfa28d476e975288af0f184af4.png
-## ユーザ登録
-curl -H "Content-Type: application/json" -X POST http://localhost:8787/signup -d '{"handle": "test", "passwd": "testuser"}'
-## トークンを使ってログイン専用ページへアクセス
-curl -H "Authorization: Bearer <token>" -H "Content-Type: application/json" http://localhost:8787/user/profile
 ```
-
-データの参照
-
-```sh
-## 登録したD1データベースを参照
-curl http://localhost:8787/sample
-```
-
 
 ## テスト
 
 開発サーバを起動しておく
+
 ```sh
 npm run dev
 ```
 
 テストの実行
+
 ```sh
 npm run test
 ```
 
-### 本番構築
+## 本番構築
+
+### デプロイ
 
 ```sh
+## リモートデプロイ
+npx wrangler d1 migrations apply cfblog-practice --remote
+## シードの登録
+npm run seed:remote
+## デプロイ
+npm run deploy
+## JWTを生成
+tsx -e "console.log(require('crypto').randomBytes(256).toString('base64'));"
+## 登録
 npx wrangler secret put JWT_SECRET
+```
+
+### デストロイ
+
+```sh
+## workerを削除
+npx wrangler delete
+## DB削除
+npx wrangler d1 delete cfblog-practice
+## バケット削除
+npx wrangler r2 bucket delete cfblog-practice
 ```

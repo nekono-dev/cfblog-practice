@@ -3,7 +3,8 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   path: '/images',
   method: 'delete',
-  description: '画像を削除する',
+  description: 'Delete an image using its key.',
+  tags: ["images"],
   security: [{ Bearer: [] }],
   request: {
     body: {
@@ -17,7 +18,7 @@ const route = createRoute({
   },
   responses: {
     200: {
-      description: 'OK',
+      description: 'Image deleted successfully',
       content: {
         'application/json': {
           schema: z
@@ -33,7 +34,7 @@ const route = createRoute({
       },
     },
     400: {
-      description: 'NG',
+      description: 'Invalid request format or missing key',
       content: {
         'application/json': {
           schema: z
@@ -47,7 +48,7 @@ const route = createRoute({
       },
     },
     404: {
-      description: 'NG',
+      description: 'Image not found',
       content: {
         'application/json': {
           schema: z
@@ -63,7 +64,7 @@ const route = createRoute({
       },
     },
     500: {
-      description: 'NG',
+      description: 'Internal server error',
       content: {
         'application/json': {
           schema: z

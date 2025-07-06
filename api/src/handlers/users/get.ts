@@ -14,9 +14,8 @@ const handler: RouteHandler<typeof route, { Bindings: Env,  }> = async (c) => {
   const user = await prisma.user.findUnique({
     where: { handle },
   });
-  await prisma.$disconnect();
 
-  if (!user) return c.json({ error: 'User not found' }, 404);
+  if (!user || !user.loginAble) return c.json({ error: 'User not found' }, 404);
 
   if (handle === jwtPayload.sub) {
     // 自分のProfileの場合

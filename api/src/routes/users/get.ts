@@ -3,7 +3,8 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   path: '/users/{handle}',
   method: 'get',
-  description: 'ユーザプロフィールを表示',
+  description: 'Retrieve the public profile of a specific user by handle.',
+  tags: ["users"],
   security: [{ Bearer: [] }],
   request: {
     required: true,
@@ -13,7 +14,7 @@ const route = createRoute({
   },
   responses: {
     200: {
-      description: 'OK',
+      description: 'User profile retrieved successfully',
       content: {
         'application/json': {
           schema: z.object({
@@ -25,7 +26,7 @@ const route = createRoute({
       },
     },
     400: {
-      description: 'NG',
+      description: 'Invalid handle format',
       content: {
         'application/json': {
           schema: z
@@ -39,7 +40,7 @@ const route = createRoute({
       },
     },
     404: {
-      description: 'NG',
+      description: 'User not found',
       content: {
         'application/json': {
           schema: z

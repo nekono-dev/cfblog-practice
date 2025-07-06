@@ -3,7 +3,8 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   path: '/pages/{pageId}',
   method: 'get',
-  description: 'ページ情報を取得する',
+  description: 'Retrieve information for a specific page by its ID.',
+  tags: ["pages"],
   request: {
     required: true,
     params: z.object({
@@ -12,7 +13,7 @@ const route = createRoute({
   },
   responses: {
     200: {
-      description: 'OK',
+      description: 'Page data retrieved successfully',
       content: {
         'application/json': {
           schema: z
@@ -38,7 +39,7 @@ const route = createRoute({
       },
     },
     400: {
-      description: 'NG',
+      description: 'Invalid page ID format',
       content: {
         'application/json': {
           schema: z
@@ -52,7 +53,7 @@ const route = createRoute({
       },
     },
     404: {
-      description: 'NG',
+      description: 'Page not found',
       content: {
         'application/json': {
           schema: z
@@ -66,7 +67,7 @@ const route = createRoute({
       },
     },
     500: {
-      description: 'NG',
+      description: 'Internal server error',
       content: {
         'application/json': {
           schema: z

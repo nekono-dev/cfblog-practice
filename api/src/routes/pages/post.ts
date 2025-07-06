@@ -3,7 +3,8 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   path: '/pages',
   method: 'post',
-  description: 'ページに情報を書き込む',
+  description: 'Create a new page with specified content and metadata.',
+  tags: ["pages"],
   security: [{ Bearer: [] }],
   request: {
     body: {
@@ -24,7 +25,7 @@ const route = createRoute({
   },
   responses: {
     201: {
-      description: 'OK',
+      description: 'Page created successfully',
       content: {
         'application/json': {
           schema: z
@@ -38,7 +39,7 @@ const route = createRoute({
       },
     },
     400: {
-      description: 'NG',
+      description: 'Invalid request body',
       content: {
         'application/json': {
           schema: z
@@ -52,7 +53,7 @@ const route = createRoute({
       },
     },
     500: {
-      description: 'NG',
+      description: 'Internal server error',
       content: {
         'application/json': {
           schema: z
@@ -66,7 +67,7 @@ const route = createRoute({
       },
     },
     405: {
-      description: 'NG',
+      description: 'Method not allowed for this endpoint',
       content: {
         'application/json': {
           schema: z
