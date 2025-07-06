@@ -15,4 +15,4 @@ import likeGetHandler from '@/handlers/likes/get';
 
 export const likesPublicRouter = createOpenApiHono<{ Bindings: Env }>();
 
-// likesPublicRouter.openapi(likeGetRoute, likeGetHandler);
+likesPublicRouter.openapi(likeGetRoute, likeGetHandler);

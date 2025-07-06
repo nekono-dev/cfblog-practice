@@ -13,7 +13,7 @@ import { adminHandle, adminPasswd } from './param';
 
 describe('Like Operation test', () => {
   let adminToken: string;
-  it('[Positive] Get Admin token', async () => {
+  it('🟢[Positive] Get Admin token', async () => {
     const response = await fetch(usersTokenURL, {
       method: 'POST',
       headers: {
@@ -31,7 +31,7 @@ describe('Like Operation test', () => {
 
   const opeUserHandle = 'likeuser';
   const opeUserPasswd = 'likeuserpaswd';
-  it('[Positive] Create ope user', async () => {
+  it('🟢[Positive] Create ope user', async () => {
     const response = await fetch(usersURL, {
       method: 'POST',
       headers: {
@@ -49,7 +49,7 @@ describe('Like Operation test', () => {
   });
 
   let userToken: string;
-  it('[Positive] Get User Token', async () => {
+  it('🟢[Positive] Get User Token', async () => {
     const response = await fetch(usersTokenURL, {
       method: 'POST',
       headers: {
@@ -67,7 +67,7 @@ describe('Like Operation test', () => {
 
   const testPageId = 'liketest';
   // タグ0, タグ1を含むページを作成
-  it('[Positive] Create page, include tag0, tag1 only', async () => {
+  it('🟢[Positive] Create page, include tag0, tag1 only', async () => {
     const response = await fetch(pagesPrivURL, {
       method: 'POST',
       headers: {
@@ -88,7 +88,7 @@ describe('Like Operation test', () => {
     });
   });
 
-  it('[Positive] Add like as anonymous user', async () => {
+  it('🟢[Positive] Add like as anonymous user', async () => {
     const response = await fetch(likesPrivURL, {
       method: 'PUT',
       headers: {
@@ -106,7 +106,7 @@ describe('Like Operation test', () => {
     });
   });
 
-  it('[Positive] Add like as test user', async () => {
+  it('🟢[Positive] Add like as test user', async () => {
     const response = await fetch(likesPrivURL, {
       method: 'PUT',
       headers: {
@@ -124,7 +124,7 @@ describe('Like Operation test', () => {
     });
   });
 
-  it('[Positive] Get likes', async () => {
+  it('🟢[Positive] Get likes', async () => {
     const response = await fetch(new URL(testPageId, likesURL), {
       method: 'GET',
     });
@@ -134,7 +134,7 @@ describe('Like Operation test', () => {
     });
   });
 
-  it('[Positive] Delete ope user', async () => {
+  it('🟢[Positive] Delete ope user', async () => {
     const response = await fetch(usersPrivURL, {
       method: 'DELETE',
       headers: {
@@ -151,7 +151,7 @@ describe('Like Operation test', () => {
     });
   });
   // ユーザ作成後もlikeのトータルが変わらないことを確認
-  it('[Positive] Not likes decreased', async () => {
+  it('🟢[Positive] Not likes decreased', async () => {
     const response = await fetch(new URL(testPageId, likesURL), {
       method: 'GET',
     });
@@ -161,7 +161,7 @@ describe('Like Operation test', () => {
     });
   });
 
-  it('[Positive] Delete Created page', async () => {
+  it('🟢[Positive] Delete Created page', async () => {
     const response = await fetch(pagesPrivURL, {
       method: 'DELETE',
       headers: {

@@ -6,7 +6,7 @@ import { adminHandle, adminPasswd, adminName } from './param';
 
 describe('Admin Control test', () => {
   let adminToken: string;
-  it('[Positive] Get Admin token', async () => {
+  it('🟢[Positive] Get Admin token', async () => {
     const response = await fetch(usersTokenURL, {
       method: 'POST',
       headers: {
@@ -22,7 +22,7 @@ describe('Admin Control test', () => {
     adminToken = z.object({ token: z.string() }).parse(apiResult).token;
     console.log('[log] Admin Token: ' + adminToken);
   });
-  it('[Positive] Get Admin User Profile', async () => {
+  it('🟢[Positive] Get Admin User Profile', async () => {
     const response = await fetch(new URL(adminHandle, usersPrivURL), {
       method: 'GET',
       headers: {
