@@ -8,7 +8,7 @@ describe('User Control test', () => {
   const testUserHandle = 'testuser';
   const testUserPasswd = 'testpasswd';
   const testUserName = 'Test-User';
-  it('[Positive] Create User', async () => {
+  it('🟢[Positive] Create User', async () => {
     const response = await fetch(usersURL, {
       method: 'POST',
       headers: {
@@ -26,7 +26,7 @@ describe('User Control test', () => {
   });
 
   let userToken: string;
-  it('[Positive] Get User Token', async () => {
+  it('🟢[Positive] Get User Token', async () => {
     const response = await fetch(usersTokenURL, {
       method: 'POST',
       headers: {
@@ -43,7 +43,7 @@ describe('User Control test', () => {
     console.log('[userControlSenario] User Token: ' + userToken);
   });
 
-  it('[Positive] Get User Profile', async () => {
+  it('🟢[Positive] Get User Profile', async () => {
     const response = await fetch(new URL(testUserHandle, usersPrivURL), {
       method: 'GET',
       headers: {
@@ -60,7 +60,7 @@ describe('User Control test', () => {
     console.log('[userControlSenario] User Profile: ' + JSON.stringify(apiResult));
   });
 
-  it('[Positive] Update User Profile', async () => {
+  it('🟢[Positive] Update User Profile', async () => {
     const response = await fetch(usersPrivURL, {
       method: 'PUT',
       headers: {
@@ -78,7 +78,7 @@ describe('User Control test', () => {
     });
   });
 
-  it('[Positive] Get User Profile updated', async () => {
+  it('🟢[Positive] Get User Profile updated', async () => {
     const response = await fetch(new URL(testUserHandle, usersPrivURL), {
       method: 'GET',
       headers: {
@@ -95,7 +95,7 @@ describe('User Control test', () => {
     console.log('[userControlSenario] User Profile: ' + JSON.stringify(apiResult));
   });
 
-  it('[Positive] Get Other User Profile', async () => {
+  it('🟢[Positive] Get Other User Profile', async () => {
     const response = await fetch(new URL(otherUserHandle, usersPrivURL), {
       method: 'GET',
       headers: {
@@ -113,7 +113,7 @@ describe('User Control test', () => {
   const testUserUpdateHandle = 'testuserupdated';
   const testUserUpdatePasswd = 'testuserPwdUpdated';
   // handleの変更
-  it('[Positive] Update User Handle and passwd', async () => {
+  it('🟢[Positive] Update User Handle and passwd', async () => {
     const response = await fetch(usersPrivURL, {
       method: 'PUT',
       headers: {
@@ -135,7 +135,7 @@ describe('User Control test', () => {
   });
 
   // Handleが変わった後ユーザが存在しないことを確認
-  it('[Negative] Check old handle not found', async () => {
+  it('🔴[Negative] Check old handle not found', async () => {
     const response = await fetch(new URL(testUserHandle, usersPrivURL), {
       method: 'GET',
       headers: {
@@ -150,7 +150,7 @@ describe('User Control test', () => {
   });
 
   // Handleが変わってトークンが無効であることを確認
-  it('[Negative] Fail delete User', async () => {
+  it('🔴[Negative] Fail delete User', async () => {
     const response = await fetch(usersPrivURL, {
       method: 'DELETE',
       headers: {
@@ -167,7 +167,7 @@ describe('User Control test', () => {
     });
   });
 
-  it('[Positive] Get User Token updated', async () => {
+  it('🟢[Positive] Get User Token updated', async () => {
     const response = await fetch(usersTokenURL, {
       method: 'POST',
       headers: {
@@ -184,7 +184,7 @@ describe('User Control test', () => {
     console.log('[userControlSenario] User Token updated: ' + userToken);
   });
 
-  it('[Positive] Get User Profile updated', async () => {
+  it('🟢[Positive] Get User Profile updated', async () => {
     const response = await fetch(new URL(testUserUpdateHandle, usersPrivURL), {
       method: 'GET',
       headers: {
@@ -203,7 +203,7 @@ describe('User Control test', () => {
     );
   });
 
-  it('[Positive] Delete User', async () => {
+  it('🟢[Positive] Delete User', async () => {
     const response = await fetch(usersPrivURL, {
       method: 'DELETE',
       headers: {

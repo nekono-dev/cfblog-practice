@@ -21,7 +21,7 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
       },
     });
 
-    if (!page) {
+    if (!page || !page.isPublic) {
       return c.json({ error: 'Page not found' }, 404);
     }
 

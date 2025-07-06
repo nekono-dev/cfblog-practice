@@ -12,7 +12,7 @@ import { adminHandle, adminPasswd } from './param';
 
 describe('Tag Operation test', () => {
   let adminToken: string;
-  it('[Positive] Get Admin token', async () => {
+  it('🟢[Positive] Get Admin token', async () => {
     const response = await fetch(usersTokenURL, {
       method: 'POST',
       headers: {
@@ -32,7 +32,7 @@ describe('Tag Operation test', () => {
   const testTags = ['hoge', 'fuga'];
   const testPage1Tag = testTags;
   // タグ0, タグ1を含むページを作成
-  it('[Positive] Create page, include tag0,tag1', async () => {
+  it('🟢[Positive] Create page, include tag0,tag1', async () => {
     const response = await fetch(pagesPrivURL, {
       method: 'POST',
       headers: {
@@ -56,7 +56,7 @@ describe('Tag Operation test', () => {
   const testPage2Id = 'operationtest2';
   const testPage2Tag = [testTags[1]];
   // タグ1のみを含むページを作成
-  it('[Positive] Create page, include tag1 only', async () => {
+  it('🟢[Positive] Create page, include tag1 only', async () => {
     const response = await fetch(pagesPrivURL, {
       method: 'POST',
       headers: {
@@ -77,7 +77,7 @@ describe('Tag Operation test', () => {
     });
   });
 
-  it('[Positive] Get tag0 pagelist', async () => {
+  it('🟢[Positive] Get tag0 pagelist', async () => {
     const response = await fetch(new URL(testTags[0], tagsURL), {
       method: 'GET',
     });
@@ -96,7 +96,7 @@ describe('Tag Operation test', () => {
     });
   });
 
-  it('[Positive] Get tag1 pagelist', async () => {
+  it('🟢[Positive] Get tag1 pagelist', async () => {
     const response = await fetch(new URL(testTags[1], tagsURL), {
       method: 'GET',
     });
@@ -123,7 +123,7 @@ describe('Tag Operation test', () => {
     });
   });
 
-  it('[Positive] Delete Created Pages', async () => {
+  it('🟢[Positive] Delete Created Pages', async () => {
     const response = await fetch(pagesPrivURL, {
       method: 'DELETE',
       headers: {
@@ -140,7 +140,7 @@ describe('Tag Operation test', () => {
     });
   });
 
-  it('[Negative] Check page deleted', async () => {
+  it('🔴[Negative] Check page deleted', async () => {
     const response = await fetch(new URL(testPage1Id, pagesURL), {
       method: 'GET',
     });
@@ -150,7 +150,7 @@ describe('Tag Operation test', () => {
     });
   });
 
-  it('[Negative] No pages include tag1', async () => {
+  it('🔴[Negative] No pages include tag1', async () => {
     const response = await fetch(new URL(testTags[1], tagsURL), {
       method: 'GET',
     });

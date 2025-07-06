@@ -10,7 +10,7 @@ import {
 } from './param';
 
 describe('Anony user NO Control test', () => {
-  it('[Negative] Cannot get Token', async () => {
+  it('🔴[Negative] Cannot get Token', async () => {
     const response = await fetch(usersTokenURL, {
       method: 'POST',
       headers: {
@@ -28,7 +28,7 @@ describe('Anony user NO Control test', () => {
   });
 
   let adminToken: string;
-  it('[Positive] Get Admin token', async () => {
+  it('🟢[Positive] Get Admin token', async () => {
     const response = await fetch(usersTokenURL, {
       method: 'POST',
       headers: {
@@ -44,7 +44,7 @@ describe('Anony user NO Control test', () => {
     adminToken = z.object({ token: z.string() }).parse(apiResult).token;
   });
 
-  it('[Negative] Cannot get anony Profile', async () => {
+  it('🔴[Negative] Cannot get anony Profile', async () => {
     const response = await fetch(new URL(anonyUserHandle, usersPrivURL), {
       method: 'GET',
       headers: {
