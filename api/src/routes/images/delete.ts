@@ -4,6 +4,7 @@ const route = createRoute({
   path: '/images',
   method: 'delete',
   description: '画像を削除する',
+  security: [{ Bearer: [] }],
   request: {
     body: {
       required: true,

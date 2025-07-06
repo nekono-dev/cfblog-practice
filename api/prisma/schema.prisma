@@ -10,16 +10,15 @@ datasource db {
 }
 
 model Page {
-  id             Int      @id @unique @default(autoincrement())
-  pageId         String   @unique
-  title          String
-  text           String?
-  imgId          String?
-  date           DateTime
-  isPublic       Boolean  @default(true)
-  likes          Like[]
-  tags           Tag[]    @relation("PageTags")
-  visibleToUsers User[]   @relation("UserPageVisibility")
+  id       Int      @id @unique @default(autoincrement())
+  pageId   String   @unique
+  title    String
+  text     String?
+  imgId    String?
+  date     DateTime
+  likes    Like[]
+  tags     Tag[]    @relation("PageTags")
+  isPublic Boolean  @default(true)
 }
 
 model Tag {
@@ -43,7 +42,7 @@ model User {
   name           String
   hashedPassword String
   birthday       DateTime?
-  writeAble      Boolean   @default(false)
   likes          Like[]
-  visiblePages   Page[]    @relation("UserPageVisibility")
+  writeAble      Boolean   @default(false)
+  loginAble      Boolean   @default(true)
 }

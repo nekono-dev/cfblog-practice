@@ -1,11 +1,19 @@
 // import { SELF, env } from 'cloudflare:test';
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
+import {
+  imagesPrivURL,
+  imagesURL,
+  pagesPrivURL,
+  pagesURL,
+  usersPrivURL,
+  usersTokenURL,
+} from './urls';
 
 describe('Page control Senario test', () => {
   let adminToken: string;
   it('[Positive] Get Admin token', async () => {
-    const response = await fetch('http://localhost:8787/users/token', {
+    const response = await fetch(usersTokenURL, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
@@ -24,7 +32,7 @@ describe('Page control Senario test', () => {
   let imageKey: string;
   const imageUint8Array = new Uint8Array([0x89, 0x50, 0x4e, 0x47]);
   it('[Positive] Post New Image', async () => {
-    const response = await fetch('http://localhost:8787/s/images', {
+    const response = await fetch(imagesPrivURL, {
       method: 'PUT',
       headers: {
         'Content-type': 'image/png',
@@ -39,7 +47,7 @@ describe('Page control Senario test', () => {
   });
   // 投稿したイメージが存在し、投稿前と同一であること
   it('[Positive] Get Posted Image', async () => {
-    const response = await fetch('http://localhost:8787/images/' + imageKey, {
+    const response = await fetch(new URL(imageKey, imagesURL), {
       method: 'GET',
     });
     const apiResult = await response.arrayBuffer();
@@ -47,7 +55,7 @@ describe('Page control Senario test', () => {
   });
   const testPageId = 'testpage';
   it('[Positive] Post New Page', async () => {
-    const response = await fetch('http://localhost:8787/s/pages', {
+    const response = await fetch(pagesPrivURL, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
@@ -68,7 +76,7 @@ describe('Page control Senario test', () => {
     });
   });
   it('[Positive] Get Created Page', async () => {
-    const response = await fetch('http://localhost:8787/pages/' + testPageId, {
+    const response = await fetch(new URL(testPageId, pagesURL), {
       method: 'GET',
     });
     const apiResult = await response.json();
@@ -80,10 +88,12 @@ describe('Page control Senario test', () => {
       tags: ['test'],
       date: '2000-01-01T00:00:00.000Z',
     });
-    console.log('[pageSenario|log] ' + testPageId + ' :' + JSON.stringify(apiResult));
+    console.log(
+      '[pageSenario|log] ' + testPageId + ' :' + JSON.stringify(apiResult)
+    );
   });
   it('[Positive] Delete Created Page with Image', async () => {
-    const response = await fetch('http://localhost:8787/s/pages', {
+    const response = await fetch(pagesPrivURL, {
       method: 'DELETE',
       headers: {
         'Content-type': 'application/json',
@@ -103,7 +113,7 @@ describe('Page control Senario test', () => {
   });
   // Imageが削除されていること
   it('[Negative] Image already deleted by page deletion', async () => {
-    const response = await fetch('http://localhost:8787/images/' + imageKey, {
+    const response = await fetch(new URL(imageKey, imagesURL), {
       method: 'GET',
     });
     const apiResult = await response.json();

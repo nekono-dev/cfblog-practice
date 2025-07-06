@@ -2,23 +2,14 @@ import { OpenAPIHono } from '@hono/zod-openapi';
 import { Env } from '@/common/env';
 import { swaggerUI } from '@hono/swagger-ui';
 // APIs
-import { imagesPublicRouter, imagesProtectedRouter } from '@/routes/images';
-import { pagesPublicRouter, pagesProtectedRouter } from '@/routes/pages';
-import { usersPublicRouter, usersProtectedRouter } from '@/routes/users';
+import { imagesPublicRouter, imagesRestrictedRouter } from '@/routes/images';
+import { pagesPublicRouter, pagesRestrictedRouter } from '@/routes/pages';
+import { usersPublicRouter, usersRestrictedRouter } from '@/routes/users';
+import { likesAccessibleRouter } from './routes/likes';
 
-const app = new OpenAPIHono<{ Bindings: Env }>({ strict: true });
+import { jwtMiddleware, jwtOptional } from './middleware/jwt';
 
-// 同じrouteになるとmiddlewareが上書きされるため、意図的に変更する必要あり
-app
-  .basePath('/s')
-  .route('/', imagesProtectedRouter)
-  .route('/', pagesProtectedRouter)
-  .route('/', usersProtectedRouter);
-
-app
-  .route('/', imagesPublicRouter)
-  .route('/', pagesPublicRouter)
-  .route('/', usersPublicRouter);
+const app = new OpenAPIHono<{ Bindings: Env }>({ strict: false });
 
 // APIドキュメントを出力
 app
@@ -30,5 +21,20 @@ app
     },
   })
   .get('/doc', swaggerUI({ url: '/openapi.json' }));
+
+// 同じrouteになるとmiddlewareが上書きされる
+// 先にPublicRouterを追加すると回避可能
+app
+  .route('/', imagesPublicRouter)
+  .route('/', pagesPublicRouter)
+  .route('/', usersPublicRouter);
+app
+  .use("*",jwtOptional)
+  .route("/", likesAccessibleRouter)
+app
+  .use('*', jwtMiddleware)
+  .route('/', imagesRestrictedRouter)
+  .route('/', pagesRestrictedRouter)
+  .route('/', usersRestrictedRouter);
 
 export default app;

@@ -1,6 +1,7 @@
 // import { SELF, env } from 'cloudflare:test';
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
+import { usersPrivURL, usersTokenURL } from './urls';
 
 describe('Admin Control test', () => {
   const adminHandle = 'admin';
@@ -8,7 +9,7 @@ describe('Admin Control test', () => {
 
   let adminToken: string;
   it('[Positive] Get Admin token', async () => {
-    const response = await fetch('http://localhost:8787/users/token', {
+    const response = await fetch(usersTokenURL, {
       method: 'POST',
       headers: {
         'Content-type': 'application/json',
@@ -23,17 +24,14 @@ describe('Admin Control test', () => {
     adminToken = z.object({ token: z.string() }).parse(apiResult).token;
     console.log('[log] Admin Token: ' + adminToken);
   });
-  it('[Positive] Get Other User Profile', async () => {
-    const response = await fetch(
-      'http://localhost:8787/s/users/' + adminHandle,
-      {
-        method: 'GET',
-        headers: {
-          'Content-type': 'application/json',
-          Authorization: 'Bearer ' + adminToken,
-        },
-      }
-    );
+  it('[Positive] Get Admin User Profile', async () => {
+    const response = await fetch(new URL(adminHandle, usersPrivURL), {
+      method: 'GET',
+      headers: {
+        'Content-type': 'application/json',
+        Authorization: 'Bearer ' + adminToken,
+      },
+    });
     const apiResult = await response.json();
     expect(apiResult).toMatchObject({
       handle: adminHandle,

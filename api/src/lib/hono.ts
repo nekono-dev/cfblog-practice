@@ -4,7 +4,7 @@ import type { Env } from 'hono';
 
 const createOpenApiHono = <E extends Env = Env>() =>
   new OpenAPIHono<E>({
-    strict: true,
+    strict: false,
     defaultHook: (result) => {
       if (!result.success) {
         throw new HTTPException(401, {

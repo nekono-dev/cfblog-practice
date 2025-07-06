@@ -16,3 +16,16 @@ export const jwtMiddleware = createMiddleware<{
     return c.json({ error: 'Invalid token' }, 401);
   }
 });
+
+export const jwtOptional = createMiddleware<{
+  Bindings: Env;
+}>(async (c, next) => {
+  const token = c.req.header('Authorization')?.replace('Bearer ', '');
+  if (!token) return await next();
+  try {
+    const payload = await verify(token, c.env.JWT_SECRET, 'HS256');
+    c.set('jwtPayload', payload);
+  } finally {
+    await next();
+  }
+});

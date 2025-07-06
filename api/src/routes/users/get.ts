@@ -4,6 +4,7 @@ const route = createRoute({
   path: '/users/{handle}',
   method: 'get',
   description: 'ユーザプロフィールを表示',
+  security: [{ Bearer: [] }],
   request: {
     required: true,
     params: z.object({

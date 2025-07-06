@@ -1,6 +1,5 @@
 import { Env } from '@/common/env';
 import createOpenApiHono from '@/lib/hono';
-import { jwtMiddleware } from '@/middleware/jwt';
 
 // protected
 import imagePutRoute from '@/routes/images/put';
@@ -8,11 +7,10 @@ import imagePutHandler from '@/handlers/images/put';
 import imageDeleteRoute from '@/routes/images/delete';
 import imageDeleteHandler from '@/handlers/images/delete';
 
-export const imagesProtectedRouter = createOpenApiHono<{ Bindings: Env }>();
+export const imagesRestrictedRouter = createOpenApiHono<{ Bindings: Env }>();
 
-imagesProtectedRouter.use('*', jwtMiddleware);
-imagesProtectedRouter.openapi(imagePutRoute, imagePutHandler);
-imagesProtectedRouter.openapi(imageDeleteRoute, imageDeleteHandler);
+imagesRestrictedRouter.openapi(imagePutRoute, imagePutHandler);
+imagesRestrictedRouter.openapi(imageDeleteRoute, imageDeleteHandler);
 
 // public
 import imageGetRoute from '@/routes/images/get';

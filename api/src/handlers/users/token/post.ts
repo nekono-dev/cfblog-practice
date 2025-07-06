@@ -15,8 +15,16 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const prisma = createPrismaClient(c.env);
 
   // ユーザがいるか確認
-  const user = await prisma.user.findUnique({ where: { handle } });
-  if (!user) return c.json({ error: 'Invalid credentials' }, 401);
+  const user = await prisma.user.findUnique({
+    where: { handle },
+    select: {
+      handle: true,
+      hashedPassword: true,
+      loginAble: true,
+    },
+  });
+  if (!user || !user.loginAble)
+    return c.json({ error: 'Login not permitted' }, 403);
 
   const valid = comparePassword(passwd, user.hashedPassword);
   if (!valid) return c.json({ error: 'Invalid credentials' }, 401);

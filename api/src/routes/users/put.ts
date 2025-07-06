@@ -4,6 +4,7 @@ const route = createRoute({
   path: '/users',
   method: 'put',
   description: 'ユーザ情報を更新する',
+  security: [{ Bearer: [] }],
   request: {
     body: {
       required: true,
@@ -11,7 +12,7 @@ const route = createRoute({
         'application/json': {
           schema: z.object({
             passwd: z.string().min(8).optional(),
-            handle: z.string().min(8),
+            handle: z.string().min(8).optional(),
             name: z.string().optional(),
             birthday: z.coerce.date(),
           }),
@@ -34,7 +35,7 @@ const route = createRoute({
         },
       },
     },
-    400: {
+    404: {
       description: 'NG',
       content: {
         'application/json': {
@@ -48,7 +49,7 @@ const route = createRoute({
         },
       },
     },
-    404: {
+    409: {
       description: 'NG',
       content: {
         'application/json': {
@@ -57,7 +58,21 @@ const route = createRoute({
               error: z.string(),
             })
             .openapi({
-              example: { error: 'Invalid request' },
+              example: { error: 'New handle already in use' },
+            }),
+        },
+      },
+    },
+    500: {
+      description: 'NG',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              error: z.string(),
+            })
+            .openapi({
+              example: { error: 'Internal server error' },
             }),
         },
       },

@@ -62,6 +62,20 @@ const route = createRoute({
         },
       },
     },
+    403: {
+      description: 'NG',
+      content: {
+        'application/json': {
+          schema: z
+            .object({
+              error: z.string(),
+            })
+            .openapi({
+              example: { error: 'Login not permitted' },
+            }),
+        },
+      },
+    },
   },
 });
 export default route;

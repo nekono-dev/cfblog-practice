@@ -20,11 +20,11 @@
     "@types/bcryptjs": "^2.4.6",
     "@types/node": "^24.0.7",
     "path": "^0.12.7",
-    "prisma": "^6.10.0",
-    "tsx": "^4.20.3",
+    "prisma": "^6.11.1",
     "typescript": "^5.5.2",
     "vitest": "~3.2.0",
-    "wrangler": "^4.20.0"
+    "wrangler": "^4.23.0",
+    "zod-prisma-types": "^3.2.4"
   },
   "dependencies": {
     "@hono/swagger-ui": "^0.5.2",
@@ -34,7 +34,6 @@
     "@prisma/client": "^6.10.0",
     "bcryptjs": "^3.0.2",
     "hono": "^4.8.3",
-    "zod": "^3.25.67",
-    "zod-prisma-types": "^3.2.4"
+    "zod": "^3.25.67"
   }
 }

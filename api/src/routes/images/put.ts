@@ -4,6 +4,7 @@ const route = createRoute({
   path: '/images',
   method: 'put',
   description: '画像をアップロードする',
+  security: [{ Bearer: [] }],
   request: {
     body: {
       required: true,

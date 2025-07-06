@@ -4,6 +4,7 @@ const route = createRoute({
   path: '/pages',
   method: 'delete',
   description: 'ページに情報を書き込む',
+  security: [{ Bearer: [] }],
   request: {
     body: {
       required: true,

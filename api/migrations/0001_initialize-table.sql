@@ -32,7 +32,8 @@ CREATE TABLE "User" (
     "name" TEXT NOT NULL,
     "hashedPassword" TEXT NOT NULL,
     "birthday" DATETIME,
-    "writeAble" BOOLEAN NOT NULL DEFAULT false
+    "writeAble" BOOLEAN NOT NULL DEFAULT false,
+    "loginAble" BOOLEAN NOT NULL DEFAULT true
 );
 
 -- CreateTable
@@ -41,14 +42,6 @@ CREATE TABLE "_PageTags" (
     "B" INTEGER NOT NULL,
     CONSTRAINT "_PageTags_A_fkey" FOREIGN KEY ("A") REFERENCES "Page" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
     CONSTRAINT "_PageTags_B_fkey" FOREIGN KEY ("B") REFERENCES "Tag" ("id") ON DELETE CASCADE ON UPDATE CASCADE
-);
-
--- CreateTable
-CREATE TABLE "_UserPageVisibility" (
-    "A" INTEGER NOT NULL,
-    "B" INTEGER NOT NULL,
-    CONSTRAINT "_UserPageVisibility_A_fkey" FOREIGN KEY ("A") REFERENCES "Page" ("id") ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT "_UserPageVisibility_B_fkey" FOREIGN KEY ("B") REFERENCES "User" ("id") ON DELETE CASCADE ON UPDATE CASCADE
 );
 
 -- CreateIndex
@@ -77,9 +70,3 @@ CREATE UNIQUE INDEX "_PageTags_AB_unique" ON "_PageTags"("A", "B");
 
 -- CreateIndex
 CREATE INDEX "_PageTags_B_index" ON "_PageTags"("B");
-
--- CreateIndex
-CREATE UNIQUE INDEX "_UserPageVisibility_AB_unique" ON "_UserPageVisibility"("A", "B");
-
--- CreateIndex
-CREATE INDEX "_UserPageVisibility_B_index" ON "_UserPageVisibility"("B");

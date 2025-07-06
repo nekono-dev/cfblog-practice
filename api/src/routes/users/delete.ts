@@ -4,6 +4,7 @@ const route = createRoute({
   path: '/users',
   method: 'delete',
   description: 'ユーザを削除する',
+  security: [{ Bearer: [] }],
   request: {
     body: {
       required: true,

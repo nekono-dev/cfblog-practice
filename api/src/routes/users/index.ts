@@ -1,6 +1,5 @@
 import { Env } from '@/common/env';
 import createOpenApiHono from '@/lib/hono';
-import { jwtMiddleware } from '@/middleware/jwt';
 
 // protected
 import userPutRoute from '@/routes/users/put';
@@ -10,12 +9,11 @@ import userDeleteHandler from '@/handlers/users/delete';
 import userGetRoute from '@/routes/users/get';
 import userGetHandler from '@/handlers/users/get';
 
-export const usersProtectedRouter = createOpenApiHono<{ Bindings: Env }>();
+export const usersRestrictedRouter = createOpenApiHono<{ Bindings: Env }>();
 
-usersProtectedRouter.use('*', jwtMiddleware);
-usersProtectedRouter.openapi(userPutRoute, userPutHandler);
-usersProtectedRouter.openapi(userDeleteRoute, userDeleteHandler);
-usersProtectedRouter.openapi(userGetRoute, userGetHandler);
+usersRestrictedRouter.openapi(userPutRoute, userPutHandler);
+usersRestrictedRouter.openapi(userDeleteRoute, userDeleteHandler);
+usersRestrictedRouter.openapi(userGetRoute, userGetHandler);
 
 // public
 import userPostRoute from '@/routes/users/post';
