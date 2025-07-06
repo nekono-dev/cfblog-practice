@@ -1,0 +1,58 @@
+generator client {
+  provider        = "prisma-client-js"
+  output          = "../src/generated/prisma"
+  previewFeatures = ["driverAdapters"]
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Page {
+  id       Int       @id @unique @default(autoincrement())
+  pageId   String    @unique
+  title    String
+  text     String?
+  imgId    String?
+  date     DateTime
+  likes    Like[]
+  tags     PageTag[]
+  isPublic Boolean   @default(true)
+}
+
+model Tag {
+  id    Int       @id @unique @default(autoincrement())
+  label String    @unique
+  pages PageTag[]
+}
+
+model PageTag {
+  id     Int  @id @default(autoincrement())
+  page   Page @relation(fields: [pageId], references: [id])
+  pageId Int
+  tag    Tag  @relation(fields: [tagId], references: [id])
+  tagId  Int
+
+  @@unique([pageId, tagId])
+}
+
+model Like {
+  id     Int  @id @unique @default(autoincrement())
+  count  Int
+  page   Page @relation(fields: [pageId], references: [id])
+  pageId Int
+  user   User @relation(fields: [userId], references: [id])
+  userId Int
+}
+
+model User {
+  id             Int       @id @unique @default(autoincrement())
+  handle         String    @unique
+  name           String
+  hashedPassword String
+  birthday       DateTime?
+  likes          Like[]
+  writeAble      Boolean   @default(false)
+  loginAble      Boolean   @default(true)
+}
