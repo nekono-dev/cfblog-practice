@@ -27,21 +27,28 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
       select: { id: true, label: true },
     });
 
-    const existingLabelSet = new Set(existingTags.map((t) => t.label));
-    const newLabels = parsed.tags.filter(
-      (label) => !existingLabelSet.has(label)
-    );
+    const existingMap = new Map(existingTags.map((t) => [t.label, t.id]));
+    const newLabels = parsed.tags.filter((label) => !existingMap.has(label));
+
+    let newTagEntries: { id: number; label: string }[] = [];
 
     if (newLabels.length > 0) {
       await prisma.tag.createMany({
         data: newLabels.map((label) => ({ label })),
       });
+
+      const newTags = await prisma.tag.findMany({
+        where: { label: { in: newLabels } },
+        select: { id: true, label: true },
+      });
+
+      newTagEntries = newTags;
     }
 
-    const allTags = await prisma.tag.findMany({
-      where: { label: { in: parsed.tags } },
-      select: { id: true },
-    });
+    const allTags = [
+      ...existingTags.map((t) => t.id),
+      ...newTagEntries.map((t) => t.id),
+    ];
 
     const page = await prisma.page.create({
       data: {
@@ -57,7 +64,7 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
     await prisma.pageTag.createMany({
       data: allTags.map((tag) => ({
         pageId: page.id,
-        tagId: tag.id,
+        tagId: tag,
       })),
     });
 

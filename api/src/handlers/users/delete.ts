@@ -6,29 +6,37 @@ import route from '@/routes/users/delete';
 
 const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const { passwd } = c.req.valid('json');
-
   const jwtPayload = c.get('jwtPayload') as { sub: string };
   const handle = jwtPayload.sub;
 
-  // clientの作成
   const prisma = createPrismaClient(c.env);
-  // ユーザが存在するか確認
-  const user = await prisma.user.findUnique({ where: { handle: handle } });
-  if (!user) return c.json({ error: 'Authorization failed' }, 401);
+
+  // ユーザ認証
+  const user = await prisma.user.findUnique({
+    where: { handle },
+    select: { id: true, hashedPassword: true },
+  });
+
+  if (!user) {
+    return c.json({ error: 'Authorization failed' }, 401);
+  }
 
   const valid = comparePassword(passwd, user.hashedPassword);
   if (!valid) {
     return c.json({ error: 'Authorization failed' }, 401);
   }
 
-  // ユーザ削除
-  await prisma.$transaction([
-    prisma.like.updateMany({
-      where: { userId: user.id },
-      data: { userId: 0 }, // anonyユーザに移譲
-    }),
-    prisma.user.delete({ where: { id: user.id } }),
-  ]);
+  // 先にLikeを匿名ユーザ（ID = 0）へ移譲
+  await prisma.like.updateMany({
+    where: { userId: user.id },
+    data: { userId: 0 },
+  });
+
+  // ユーザ削除本体
+  await prisma.user.delete({
+    where: { id: user.id },
+  });
+
   return c.json({ message: 'User deleted' }, 200);
 };
 

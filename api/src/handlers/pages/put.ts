@@ -15,7 +15,6 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
     where: { handle: jwtPayload.sub },
     select: { writeAble: true },
   });
-
   if (!user?.writeAble) {
     return c.json({ error: 'Method Not Allowed' }, 405);
   }
@@ -24,16 +23,13 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
     where: { pageId: oldPageId },
     select: { id: true },
   });
-
   if (!page) {
     return c.json({ error: 'Page not found' }, 404);
   }
 
-  // tags を除いた parsed を removeUndefined に渡す
+  // ページ本体更新
   const { tags: _, ...parsedForUpdate } = parsed;
-  // ページ本体の更新（pageIdも含む）
   const pageUpdateData = removeUndefined(parsedForUpdate);
-
   if (Object.keys(pageUpdateData).length > 0) {
     await prisma.page.update({
       where: { pageId: oldPageId },
@@ -41,39 +37,46 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
     });
   }
 
-  // タグの置き換え処理（あれば）
+  // タグ更新処理（タグ指定がある場合のみ）
   if (parsed.tags) {
     const existingTags = await prisma.tag.findMany({
       where: { label: { in: parsed.tags } },
       select: { id: true, label: true },
     });
+    const existingMap = new Map(existingTags.map((t) => [t.label, t.id]));
+    const newLabels = parsed.tags.filter((label) => !existingMap.has(label));
 
-    const existingLabelSet = new Set(existingTags.map((t) => t.label));
-    const newLabels = parsed.tags.filter(
-      (label) => !existingLabelSet.has(label)
-    );
+    let allTagIds = [...existingTags.map((t) => t.id)];
 
     if (newLabels.length > 0) {
       await prisma.tag.createMany({
         data: newLabels.map((label) => ({ label })),
       });
+      const newTags = await prisma.tag.findMany({
+        where: { label: { in: newLabels } },
+        select: { id: true },
+      });
+      allTagIds = [...allTagIds, ...newTags.map((t) => t.id)];
     }
 
-    const allTags = await prisma.tag.findMany({
-      where: { label: { in: parsed.tags } },
-      select: { id: true },
-    });
-
-    await prisma.pageTag.deleteMany({
+    // タグ構成が変わっているか判定
+    const currentPageTags = await prisma.pageTag.findMany({
       where: { pageId: page.id },
+      select: { tagId: true },
     });
+    const currentTagIds = new Set(currentPageTags.map((t) => t.tagId));
+    const newTagIds = new Set(allTagIds);
 
-    await prisma.pageTag.createMany({
-      data: allTags.map((tag) => ({
-        pageId: page.id,
-        tagId: tag.id,
-      })),
-    });
+    const tagsUnchanged =
+      currentTagIds.size === newTagIds.size &&
+      [...newTagIds].every((id) => currentTagIds.has(id));
+
+    if (!tagsUnchanged) {
+      await prisma.pageTag.deleteMany({ where: { pageId: page.id } });
+      await prisma.pageTag.createMany({
+        data: [...newTagIds].map((tagId) => ({ pageId: page.id, tagId })),
+      });
+    }
   }
 
   return c.json({ message: 'Page updated' }, 200);
