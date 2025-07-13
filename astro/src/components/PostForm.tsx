@@ -88,13 +88,21 @@ const Component = () => {
   return (
     <div style={{ padding: '1em 0' }}>
       <div>
+        <label htmlFor="pageId">PageId</label>
         <input
+          name="pageId"
+          id="pageId"
           type="text"
           value={pageId}
           onChange={(e) => setPageid(e.target.value)}
           placeholder="pageId"
         />
+      </div>
+      <div>
+        <label htmlFor="title">タイトル</label>
         <input
+          name="title"
+          id="title"
           type="text"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
@@ -102,15 +110,21 @@ const Component = () => {
         />
       </div>
       <div>
+        <label htmlFor="text">タグ</label>
         <textarea
+          name="text"
+          id="text"
           value={text}
           onChange={(e) => setText(e.target.value)}
           placeholder="本文"
         />
       </div>
       <div>
+        <label htmlFor="tags">タグ</label>
         <input
           type="text"
+          name="tags"
+          id="tags"
           value={tag}
           onChange={(e) => setTag(e.target.value)}
           placeholder="タグをカンマ区切りで入力"

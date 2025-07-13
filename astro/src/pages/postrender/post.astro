@@ -1,0 +1,142 @@
+---
+export const prerender = false;
+import { PagesApi, ImagesApi } from '@/client';
+import Metadatas from '@/components/Metadatas.astro';
+import { config } from '@/lib/apiClientConfig';
+import ImagePreview from '@/components/ImagePreview.tsx';
+
+let token;
+if (!Astro.cookies.has('token')) {
+  return Astro.redirect('login');
+}
+const cookie = Astro.cookies.get('token');
+if (cookie) token = cookie.value;
+
+let titleInput = '';
+let pageIdInput = '';
+let textInput = '';
+let tagsInput = '';
+
+if (Astro.request.method === 'POST') {
+  const formData = await Astro.request.formData();
+  const pageId = formData.get('pageId') as string;
+  const title = formData.get('title') as string;
+  const text = formData.get('text') as string;
+  const tags = (formData.get('tags') as string).split(',');
+  const imageFile = formData.get('image'); // Astro側で受信
+
+  const today = new Date();
+  let imgId = '';
+
+  if (imageFile && imageFile instanceof Blob) {
+    try {
+      const imageApi = new ImagesApi(config);
+      const response = await imageApi.imagesPut(
+        { body: imageFile },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        },
+      );
+      if (!response?.key) throw new Error('画像アップロード失敗');
+      imgId = response.key;
+    } catch (e) {
+      console.error('Image Upload Failed', e);
+    }
+  }
+
+  try {
+    const api = new PagesApi(config);
+    await api.pagesPost(
+      {
+        pagesPostRequest: {
+          pageId,
+          title,
+          text,
+          tags,
+          date: today.toISOString(),
+          imgId: imgId || undefined,
+        },
+      },
+      {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          'Content-type': 'application/json',
+        },
+      },
+    );
+    return Astro.redirect(pageId);
+  } catch {
+    console.log('Post Failed');
+  }
+}
+
+const pageUrl = Astro.url.pathname;
+const pageTitle = 'cfblog-practice';
+const ogpImgUrl = 'ogpImage.png';
+const robots = ['index', 'follow', 'noarchive', 'noimageindex'];
+---
+
+<html lang="ja">
+  <head prefix="og: https://ogp.me/ns#">
+    <Metadatas
+      pageTitle={pageTitle}
+      subPath={pageUrl}
+      ogpImgUrl={ogpImgUrl}
+      robots={robots}
+    />
+  </head>
+  <body>
+    <h1>Cfblog-practice</h1>
+    <form method="post" enctype="multipart/form-data">
+      <div>
+        <label for="pageId">PageId</label>
+        <input
+          type="text"
+          name="pageId"
+          id="pageId"
+          value={pageIdInput}
+          placeholder="pageId"
+        />
+      </div>
+      <div>
+        <label for="title">タイトル</label>
+        <input
+          type="text"
+          name="title"
+          id="title"
+          value={titleInput}
+          placeholder="タイトル"
+        />
+      </div>
+      <div>
+        <label for="text">本文</label>
+        <textarea name="text" id="text" value={textInput} placeholder="本文"
+        ></textarea>
+      </div>
+      <div>
+        <label for="tags">タグ</label>
+        <input
+          type="text"
+          name="tags"
+          id="tags"
+          value={tagsInput}
+          placeholder="タグをカンマ区切りで入力"
+        />
+      </div>
+      <div>
+        <label for="image">画像アップロード</label>
+        <input
+          type="file"
+          name="image"
+          id="image"
+          accept="image/png, image/jpeg"
+        />
+      </div>
+      <button>ポスト</button>
+
+      <ImagePreview client:load fileSelector="#image" />
+    </form>
+  </body>
+</html>

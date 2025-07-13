@@ -12,18 +12,18 @@ const robots = ['index', 'follow', 'noarchive', 'noimageindex'];
 ---
 
 <html lang="ja">
-    <head prefix="og: https://ogp.me/ns#">
-        <Metadatas
-            pageTitle={pageTitle}
-            subPath={pageUrl}
-            ogpImgUrl={ogpImgUrl}
-            robots={robots}
-        />
-    </head>
-    <body>
-        <h1>Cfblog-practice</h1>
-        <CreateUser client:only="react" ; />
-        <LoginButton client:only="react" ; />
-        <PostButton client:only="react" ; />
-    </body>
+  <head prefix="og: https://ogp.me/ns#">
+    <Metadatas
+      pageTitle={pageTitle}
+      subPath={pageUrl}
+      ogpImgUrl={ogpImgUrl}
+      robots={robots}
+    />
+  </head>
+  <body>
+    <h1>Cfblog-practice</h1>
+    <CreateUser client:only="react" ; />
+    <LoginButton client:only="react" ; />
+    <PostButton client:only="react" ; />
+  </body>
 </html>

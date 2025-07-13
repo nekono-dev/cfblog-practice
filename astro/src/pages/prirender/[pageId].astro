@@ -3,21 +3,21 @@
 import { type PagesListGet200ResponsePagesInner } from '@/client';
 import getPageList from '@/lib/getPagesList';
 interface Props {
-    entry: PagesListGet200ResponsePagesInner;
+  entry: PagesListGet200ResponsePagesInner;
 }
 
 export async function getStaticPaths() {
-    // pages/listエンドポイントの結果を取得
-    const getPageResult = await getPageList();
-    const result = getPageResult.map((entry, index) => ({
-        params: {
-            pageId: entry.pageId,
-        },
-        props: {
-            entry,
-        },
-    }));
-    return result;
+  // pages/listエンドポイントの結果を取得
+  const getPageResult = await getPageList();
+  const result = getPageResult.map((entry, index) => ({
+    params: {
+      pageId: entry.pageId,
+    },
+    props: {
+      entry,
+    },
+  }));
+  return result;
 }
 
 // 静的サイト設定
@@ -28,8 +28,8 @@ const { entry } = Astro.props;
 const imgId = entry.imgId;
 let imgUrl: undefined | URL;
 if (imgId) {
-    const bucketUrl = import.meta.env.PUBLIC_BUCKET_BASE_URL as string;
-    imgUrl = new URL(imgId, bucketUrl);
+  const bucketUrl = import.meta.env.PUBLIC_BUCKET_BASE_URL as string;
+  imgUrl = new URL(imgId, bucketUrl);
 }
 
 const pageUrl = Astro.url.pathname;
@@ -38,17 +38,17 @@ const robots = ['index', 'follow', 'noarchive', 'noimageindex'];
 ---
 
 <html lang="ja">
-    <head prefix="og: https://ogp.me/ns#">
-        <Metadatas
-            pageTitle={entry.title}
-            subPath={pageUrl}
-            ogpImgUrl={ogpImgUrl}
-            robots={robots}
-        />
-    </head>
-    <body>
-        <h1>Prirenderd page</h1>
-        {JSON.stringify(entry)}
-        {imgUrl && <img src={imgUrl.href} />}
-    </body>
+  <head prefix="og: https://ogp.me/ns#">
+    <Metadatas
+      pageTitle={entry.title}
+      subPath={pageUrl}
+      ogpImgUrl={ogpImgUrl}
+      robots={robots}
+    />
+  </head>
+  <body>
+    <h1>Prirenderd page</h1>
+    {JSON.stringify(entry)}
+    {imgUrl && <img src={imgUrl.href} />}
+  </body>
 </html>
