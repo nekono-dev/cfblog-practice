@@ -1,0 +1,8 @@
+PRAGMA foreign_keys = OFF;
+DELETE FROM Like;
+DELETE FROM PageTag;
+DELETE FROM Page;
+DELETE FROM Tag;
+DELETE FROM User;
+DELETE FROM Role;
+PRAGMA foreign_keys = ON;

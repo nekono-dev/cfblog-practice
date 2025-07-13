@@ -7,3 +7,5 @@ export const anonyUserPasswd = 'anonypwd';
 
 export const otherUserHandle = adminHandle;
 export const otherUserName = adminName;
+
+export const ciUserHandle = 'ciuser';

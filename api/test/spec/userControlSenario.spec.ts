@@ -1,8 +1,8 @@
 // import { SELF, env } from 'cloudflare:test';
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
-import { usersPrivURL, usersTokenURL, usersURL } from './urls';
-import { otherUserName, otherUserHandle } from './param';
+import { usersPrivURL, usersTokenURL, usersURL } from '../common/urls';
+import { otherUserName, otherUserHandle } from '../common/param';
 
 describe('User Control test', () => {
   const testUserHandle = 'testuser';

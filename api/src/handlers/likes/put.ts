@@ -2,8 +2,7 @@ import { RouteHandler } from '@hono/zod-openapi';
 import { Env } from '@/common/env';
 import { createPrismaClient } from '@/lib/prisma';
 import route from '@/routes/likes/put';
-
-const ANONYMOUS_USER_ID = 0;
+import { ANONYMOUS_USER_ID } from '@/common/constants';
 
 const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const parsed = c.req.valid('json');

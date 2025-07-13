@@ -4,12 +4,14 @@ import { z } from 'zod';
 import {
   imagesPrivURL,
   imagesURL,
+  pagesPagePrivURL,
+  pagesPageURL,
   pagesPrivURL,
   pagesURL,
   usersTokenURL,
-} from './urls';
+} from '../common/urls';
 
-import { adminHandle, adminPasswd } from './param';
+import { adminHandle, adminPasswd } from '../common/param';
 
 describe('Page Control Senario test', () => {
   let adminToken: string;
@@ -77,7 +79,7 @@ describe('Page Control Senario test', () => {
     });
   });
   it('🟢[Positive] Get Created Page', async () => {
-    const response = await fetch(new URL(testPageId, pagesURL), {
+    const response = await fetch(new URL(testPageId, pagesPageURL), {
       method: 'GET',
     });
     const apiResult = await response.json();
@@ -96,7 +98,7 @@ describe('Page Control Senario test', () => {
 
   const newPageId = 'testpage-renamed';
   it('🟢[Positive] Update Created Page including pageId', async () => {
-    const response = await fetch(new URL(testPageId, pagesPrivURL), {
+    const response = await fetch(new URL(testPageId, pagesPagePrivURL), {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
@@ -118,7 +120,7 @@ describe('Page Control Senario test', () => {
   });
 
   it('🔴[Negative] Old Page ID is inaccessible after rename', async () => {
-    const response = await fetch(new URL(testPageId, pagesURL), {
+    const response = await fetch(new URL(testPageId, pagesPageURL), {
       method: 'GET',
     });
     const apiResult = await response.json();
@@ -129,7 +131,7 @@ describe('Page Control Senario test', () => {
   });
 
   it('🟢[Positive] Get Updated Page with new pageId', async () => {
-    const response = await fetch(new URL(newPageId, pagesURL), {
+    const response = await fetch(new URL(newPageId, pagesPageURL), {
       method: 'GET',
     });
     const apiResult = await response.json();
@@ -150,7 +152,7 @@ describe('Page Control Senario test', () => {
   });
 
   it('🟢[Positive] Update Page visibility to private', async () => {
-    const response = await fetch(new URL(newPageId, pagesPrivURL), {
+    const response = await fetch(new URL(newPageId, pagesPagePrivURL), {
       method: 'PUT',
       headers: {
         'Content-type': 'application/json',
@@ -167,7 +169,7 @@ describe('Page Control Senario test', () => {
   });
 
   it('🔴[Negative] Public GET should fail on private page', async () => {
-    const response = await fetch(new URL(newPageId, pagesURL), {
+    const response = await fetch(new URL(newPageId, pagesPageURL), {
       method: 'GET',
     });
     const apiResult = await response.json();

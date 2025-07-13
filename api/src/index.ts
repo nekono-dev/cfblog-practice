@@ -6,9 +6,10 @@ import { imagesPublicRouter, imagesRestrictedRouter } from '@/routes/images';
 import { pagesPublicRouter, pagesRestrictedRouter } from '@/routes/pages';
 import { usersPublicRouter, usersRestrictedRouter } from '@/routes/users';
 import { likesAccessibleRouter, likesPublicRouter } from './routes/likes';
+import { adminRestrictedRouter } from '@/routes/admin/users/{handle}/token';
 
-import { jwtMiddleware, jwtOptional } from './middleware/jwt';
-import { tagsPublicRouter } from './routes/tags';
+import { jwtMiddleware, jwtOptional } from '@/middleware/jwt';
+import { tagsPublicRouter } from '@/routes/tags';
 
 const app = new OpenAPIHono<{ Bindings: Env }>({ strict: false });
 
@@ -39,6 +40,11 @@ app
   .use('*', jwtMiddleware)
   .route('/', imagesRestrictedRouter)
   .route('/', pagesRestrictedRouter)
-  .route('/', usersRestrictedRouter);
+  .route('/', usersRestrictedRouter)
+  .route('/', adminRestrictedRouter);
+
+app.notFound((c) => {
+  return c.json({ error: 'Not Found' }, 404);
+});
 
 export default app;

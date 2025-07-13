@@ -5,6 +5,22 @@ import route from '@/routes/pages/delete';
 
 const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const prisma = createPrismaClient(c.env);
+  const jwtPayload = c.get('jwtPayload') as { sub: string };
+
+  // 書き込み権限のあるユーザーか判定
+  const user = await prisma.user.findUnique({
+    where: { handle: jwtPayload.sub },
+    select: {
+      role: {
+        select: { writeAble: true },
+      },
+    },
+  });
+
+  if (!user?.role.writeAble) {
+    return c.json({ error: 'Method Not Allowed' }, 405);
+  }
+
   const { pageId, option } = c.req.valid('json');
 
   try {
@@ -12,6 +28,7 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
       where: { pageId: { in: pageId } },
       select: { id: true, imgId: true },
     });
+
     if (pages.length === 0) {
       return c.json({ error: 'Page not found' }, 404);
     }

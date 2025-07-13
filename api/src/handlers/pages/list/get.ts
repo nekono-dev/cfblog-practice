@@ -1,15 +1,14 @@
 import { RouteHandler } from '@hono/zod-openapi';
 import { Env } from '@/common/env';
 import { createPrismaClient } from '@/lib/prisma';
-import route from '@/routes/pages/get';
+import route from '@/routes/pages/list/get';
 
 const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
-  const { pageId } = c.req.valid('param');
   const prisma = createPrismaClient(c.env);
 
   try {
-    const page = await prisma.page.findUnique({
-      where: { pageId },
+    const pages = await prisma.page.findMany({
+      where: { isPublic: true },
       include: {
         tags: {
           select: {
@@ -19,26 +18,20 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
           },
         },
       },
+      orderBy: { date: 'desc' },
     });
 
-    if (!page || !page.isPublic) {
-      return c.json({ error: 'Page not found' }, 404);
-    }
+    const result = pages.map((page) => ({
+      pageId: page.pageId,
+      title: page.title,
+      text: page.text,
+      imgId: page.imgId,
+      date: page.date,
+      tags: page.tags.map((pt) => pt.tag.label),
+    }));
 
-    const tags = page.tags.map((pt) => pt.tag.label);
-
-    return c.json(
-      {
-        pageId: page.pageId,
-        title: page.title,
-        text: page.text,
-        imgId: page.imgId,
-        date: page.date,
-        tags,
-      },
-      200
-    );
-  } catch (e: unknown) {
+    return c.json({ pages: result }, 200);
+  } catch (e) {
     console.error(e);
     return c.json({ error: 'Internal Server Error' }, 500);
   }

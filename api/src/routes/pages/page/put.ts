@@ -1,7 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 const route = createRoute({
-  path: '/pages/{pageId}',
+  path: '/pages/page/{pageId}',
   method: 'put',
   description: 'Update an existing page with new content and metadata.',
   tags: ['pages'],
@@ -15,9 +15,9 @@ const route = createRoute({
       content: {
         'application/json': {
           schema: z.object({
-            pageId: z.string().optional(),
+            pageId: z.string().nonempty().optional(),
             title: z.string().optional(),
-            text: z.string().nullable().optional(),
+            text: z.string().optional(),
             imgId: z.string().nullable().optional(),
             tags: z.string().array().optional(),
             date: z.coerce.date().optional(),

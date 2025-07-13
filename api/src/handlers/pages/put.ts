@@ -2,7 +2,7 @@ import { RouteHandler } from '@hono/zod-openapi';
 import { Env } from '@/common/env';
 import { createPrismaClient } from '@/lib/prisma';
 import { removeUndefined } from '@/lib/removeUndefined';
-import route from '@/routes/pages/put';
+import route from '@/routes/pages/page/put';
 
 const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const jwtPayload = c.get('jwtPayload') as { sub: string };
@@ -11,11 +11,17 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const { pageId: oldPageId } = c.req.valid('param');
   const parsed = c.req.valid('json');
 
+  // ユーザーの書き込み権限チェック（role経由）
   const user = await prisma.user.findUnique({
     where: { handle: jwtPayload.sub },
-    select: { writeAble: true },
+    select: {
+      role: {
+        select: { writeAble: true },
+      },
+    },
   });
-  if (!user?.writeAble) {
+
+  if (!user?.role.writeAble) {
     return c.json({ error: 'Method Not Allowed' }, 405);
   }
 
@@ -23,6 +29,7 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
     where: { pageId: oldPageId },
     select: { id: true },
   });
+
   if (!page) {
     return c.json({ error: 'Page not found' }, 404);
   }
@@ -30,6 +37,7 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   // ページ本体更新
   const { tags: _, ...parsedForUpdate } = parsed;
   const pageUpdateData = removeUndefined(parsedForUpdate);
+
   if (Object.keys(pageUpdateData).length > 0) {
     await prisma.page.update({
       where: { pageId: oldPageId },
@@ -37,7 +45,7 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
     });
   }
 
-  // タグ更新処理（タグ指定がある場合のみ）
+  // タグ更新処理（タグ指定がある場合）
   if (parsed.tags) {
     const existingTags = await prisma.tag.findMany({
       where: { label: { in: parsed.tags } },
@@ -59,14 +67,13 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
       allTagIds = [...allTagIds, ...newTags.map((t) => t.id)];
     }
 
-    // タグ構成が変わっているか判定
     const currentPageTags = await prisma.pageTag.findMany({
       where: { pageId: page.id },
       select: { tagId: true },
     });
+
     const currentTagIds = new Set(currentPageTags.map((t) => t.tagId));
     const newTagIds = new Set(allTagIds);
-
     const tagsUnchanged =
       currentTagIds.size === newTagIds.size &&
       [...newTagIds].every((id) => currentTagIds.has(id));
