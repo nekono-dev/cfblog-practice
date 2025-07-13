@@ -13,7 +13,6 @@ if (typeof pageId === 'undefined') {
     });
 }
 const pagesApi = new PagesApi(config);
-
 const getPageResult = await pagesApi.pagesPagePageIdGet({
     pageId,
 });
@@ -23,6 +22,14 @@ if ('error' in getPageResult) {
         status: 404,
         statusText: 'Not found',
     });
+}
+
+// ImageIDが存在する場合、ロード時にimgUrlを作成
+const imgId = getPageResult.imgId;
+let imgUrl: undefined | URL;
+if (imgId) {
+    const bucketUrl = import.meta.env.PUBLIC_BUCKET_BASE_URL as string;
+    imgUrl = new URL(imgId, bucketUrl);
 }
 
 const pageUrl = Astro.url.pathname;
@@ -43,5 +50,6 @@ const robots = ['index', 'follow', 'noarchive', 'noimageindex'];
     <body>
         <h1>Postrenderd page</h1>
         {JSON.stringify(getPageResult)}
+        {imgUrl && <img src={imgUrl.href} />}
     </body>
 </html>

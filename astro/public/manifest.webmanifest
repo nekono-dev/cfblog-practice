@@ -1,14 +1,14 @@
 {
-    "name": "cfblog-practice",
-    "short_name": "practice",
-    "start_url": "/",
-    "display": "standalone",
-    "background_color": "#FFFFFF",
-    "theme_color": "#FFFFFF",
-    "icons": [
-        {
-            "src": "/favicon.svg",
-            "sizes": "any"
-        }
-    ]
+  "name": "cfblog-practice",
+  "short_name": "practice",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#FFFFFF",
+  "theme_color": "#FFFFFF",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "sizes": "any"
+    }
+  ]
 }

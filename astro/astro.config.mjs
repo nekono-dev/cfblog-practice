@@ -5,11 +5,11 @@ import cloudflare from '@astrojs/cloudflare';
 
 // https://astro.build/config
 export default defineConfig({
-    site: 'http://localhost:4321',
-    integrations: [react()],
-    server: {
-        port: 4321,
-        // host: true,
-    },
-    adapter: cloudflare(),
+  site: 'http://localhost:4321',
+  integrations: [react()],
+  server: {
+    port: 4321,
+    // host: true,
+  },
+  adapter: cloudflare(),
 });

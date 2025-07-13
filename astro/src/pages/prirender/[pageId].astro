@@ -2,6 +2,9 @@
 // PageListにより取得できるPageをすべて作成
 import { type PagesListGet200ResponsePagesInner } from '@/client';
 import getPageList from '@/lib/getPagesList';
+interface Props {
+    entry: PagesListGet200ResponsePagesInner;
+}
 
 export async function getStaticPaths() {
     // pages/listエンドポイントの結果を取得
@@ -17,11 +20,17 @@ export async function getStaticPaths() {
     return result;
 }
 
+// 静的サイト設定
 import Metadatas from '@/components/Metadatas.astro';
-interface Props {
-    entry: PagesListGet200ResponsePagesInner;
-}
 const { entry } = Astro.props;
+
+// ImageIDが存在する場合、ロード時にimgUrlを作成
+const imgId = entry.imgId;
+let imgUrl: undefined | URL;
+if (imgId) {
+    const bucketUrl = import.meta.env.PUBLIC_BUCKET_BASE_URL as string;
+    imgUrl = new URL(imgId, bucketUrl);
+}
 
 const pageUrl = Astro.url.pathname;
 const ogpImgUrl = 'ogpImage.png';
@@ -40,5 +49,6 @@ const robots = ['index', 'follow', 'noarchive', 'noimageindex'];
     <body>
         <h1>Prirenderd page</h1>
         {JSON.stringify(entry)}
+        {imgUrl && <img src={imgUrl.href} />}
     </body>
 </html>
