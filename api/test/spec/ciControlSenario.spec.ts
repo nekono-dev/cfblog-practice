@@ -1,6 +1,6 @@
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
-import { pagesPrivURL, adminURL, usersTokenURL, pagesPagePrivURL } from '../common/urls';
+import { pagesPrivURL, adminURL, usersTokenURL } from '../common/urls';
 
 import { adminHandle, adminPasswd, ciUserHandle } from '../common/param';
 
@@ -55,6 +55,9 @@ describe('CI Control Scenario test', () => {
         headers: {
           Authorization: 'Bearer ' + adminToken,
         },
+        body: JSON.stringify({
+          exp: 31536000,
+        }),
       }
     );
     const apiResult = await response.json();

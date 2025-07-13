@@ -4,9 +4,7 @@ import { z } from 'zod';
 import {
   usersTokenURL,
   pagesPrivURL,
-  likesURL,
   tagsURL,
-  pagesURL,
   pagesPageURL,
 } from '../common/urls';
 import { adminHandle, adminPasswd } from '../common/param';

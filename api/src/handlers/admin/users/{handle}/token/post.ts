@@ -7,6 +7,8 @@ import { ADMIN_ROLE_ID } from '@/common/constants';
 
 const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const { handle } = c.req.valid('param');
+  const { exp } = c.req.valid('json');
+
   const jwtPayload = c.get('jwtPayload') as { sub: string };
 
   const prisma = createPrismaClient(c.env);
@@ -35,10 +37,13 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
       return c.json({ error: 'User not found' }, 404);
     }
 
+    // デフォルトは1時間（3600秒）
+    const expiresIn = exp ?? 60 * 60;
+
     const token = await sign(
       {
         sub: targetUser.handle,
-        exp: Math.floor(Date.now() / 1000) + 60 * 60 * 1,
+        exp: Math.floor(Date.now() / 1000) + expiresIn,
       },
       c.env.JWT_SECRET,
       'HS256'

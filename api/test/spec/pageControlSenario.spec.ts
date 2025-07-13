@@ -7,7 +7,6 @@ import {
   pagesPagePrivURL,
   pagesPageURL,
   pagesPrivURL,
-  pagesURL,
   usersTokenURL,
 } from '../common/urls';
 

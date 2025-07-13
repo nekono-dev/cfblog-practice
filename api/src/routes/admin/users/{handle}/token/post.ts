@@ -9,6 +9,23 @@ const route = createRoute({
     params: z.object({
       handle: z.string().min(1).openapi({ description: 'Target user handle' }),
     }),
+    body: {
+      content: {
+        'application/json': {
+          schema: z.object({
+            exp: z
+              .number()
+              .int()
+              .positive()
+              .optional()
+              .openapi({
+                description: 'Token expiration in seconds (optional)',
+                example: 3600,
+              }),
+          }),
+        },
+      },
+    },
   },
   responses: {
     201: {
