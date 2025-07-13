@@ -53,10 +53,11 @@ describe('CI Control Scenario test', () => {
       {
         method: 'POST',
         headers: {
+          'Content-type': 'application/json',
           Authorization: 'Bearer ' + adminToken,
         },
         body: JSON.stringify({
-          exp: 31536000,
+          exp: 60 * 60 * 24 * 365,
         }),
       }
     );

@@ -37,13 +37,10 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
       return c.json({ error: 'User not found' }, 404);
     }
 
-    // デフォルトは1時間（3600秒）
-    const expiresIn = exp ?? 60 * 60;
-
     const token = await sign(
       {
         sub: targetUser.handle,
-        exp: Math.floor(Date.now() / 1000) + expiresIn,
+        exp: Math.floor(Date.now() / 1000) + exp,
       },
       c.env.JWT_SECRET,
       'HS256'

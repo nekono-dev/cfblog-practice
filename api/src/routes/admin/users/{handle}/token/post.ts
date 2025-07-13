@@ -10,18 +10,14 @@ const route = createRoute({
       handle: z.string().min(1).openapi({ description: 'Target user handle' }),
     }),
     body: {
+      required: true,
       content: {
         'application/json': {
           schema: z.object({
-            exp: z
-              .number()
-              .int()
-              .positive()
-              .optional()
-              .openapi({
-                description: 'Token expiration in seconds (optional)',
-                example: 3600,
-              }),
+            exp: z.coerce.number().int().positive().default(3600).openapi({
+              description: 'Token expiration in seconds (optional)',
+              example: 3600,
+            }),
           }),
         },
       },

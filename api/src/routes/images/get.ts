@@ -4,7 +4,7 @@ const route = createRoute({
   path: '/images/{key}',
   method: 'get',
   description: 'Fetch an image by its key.',
-  tags: ["images"],
+  tags: ['images'],
   request: {
     required: true,
     params: z.object({ key: z.string() }),
@@ -14,10 +14,11 @@ const route = createRoute({
       description: 'Image retrieved successfully',
       content: {
         'image/*': {
-          schema: z.any().openapi({
+          schema: {
+            type: 'string',
             format: 'binary',
-            example: '<png binary stream>',
-          }),
+            example: '<binary stream>',
+          },
         },
       },
     },
