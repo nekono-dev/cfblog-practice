@@ -1,13 +1,13 @@
 // import { SELF, env } from 'cloudflare:test';
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
-import { usersTokenURL, usersPrivURL } from './urls';
+import { usersTokenURL, usersPrivURL } from '../common/urls';
 import {
   adminHandle,
   adminPasswd,
   anonyUserHandle,
   anonyUserPasswd,
-} from './param';
+} from '../common/param';
 
 describe('Anony user NO Control test', () => {
   it('🔴[Negative] Cannot get Token', async () => {

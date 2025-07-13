@@ -9,10 +9,14 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
 
   const user = await prisma.user.findUnique({
     where: { handle: jwtPayload.sub },
-    select: { writeAble: true },
+    select: {
+      role: {
+        select: { writeAble: true },
+      },
+    },
   });
 
-  if (!user?.writeAble) {
+  if (!user?.role.writeAble) {
     return c.json({ error: 'Method Not Allowed' }, 405);
   }
 

@@ -57,6 +57,16 @@ const route = createRoute({
         },
       },
     },
+    405: {
+      description: 'Method not allowed',
+      content: {
+        'application/json': {
+          schema: z
+            .object({ error: z.string() })
+            .openapi({ example: { error: 'Method Not Allowed' } }),
+        },
+      },
+    },
     415: {
       description: 'Unsupported media type',
       content: {

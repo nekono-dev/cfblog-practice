@@ -3,6 +3,7 @@ import { Env } from '@/common/env';
 import { createPrismaClient } from '@/lib/prisma';
 import { hashPassword } from '@/lib/bcrypt';
 import route from '@/routes/users/post';
+import { USER_ROLE_ID } from '@/common/constants';
 
 const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
   const { handle, passwd } = c.req.valid('json');
@@ -21,6 +22,7 @@ const handler: RouteHandler<typeof route, { Bindings: Env }> = async (c) => {
       handle,
       name: handle,
       hashedPassword,
+      roleId: USER_ROLE_ID,
     },
   });
   return c.json({ message: 'User created' }, 201);
