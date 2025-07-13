@@ -10,6 +10,12 @@ const Component = () => {
   const api = new UsersApi(config);
   const handlePost = async () => {
     try {
+      await api.usersPost({
+        usersPostRequest: {
+          passwd,
+          handle,
+        },
+      });
       const result = await api.usersTokenPost({
         usersPostRequest: {
           passwd,
@@ -38,7 +44,7 @@ const Component = () => {
         onChange={(e) => setPasswd(e.target.value)}
         placeholder="password"
       />
-      <button onClick={handlePost}>ログイン</button>
+      <button onClick={handlePost}>ユーザ作成</button>
     </div>
   );
 };

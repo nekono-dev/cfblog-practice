@@ -1,6 +1,7 @@
 ---
-export const prerender = false;
 import LoginButton from '@/components/loginButton';
+import PostButton from '@/components/postButton';
+import CreateUser from '@/components/createUser';
 ---
 
 <html lang="en">
@@ -13,6 +14,8 @@ import LoginButton from '@/components/loginButton';
   </head>
   <body>
     <h1>Astro</h1>
+    <CreateUser client:only="react" ; />
     <LoginButton client:only="react" ; />
+    <PostButton client:only="react" ; />
   </body>
 </html>
