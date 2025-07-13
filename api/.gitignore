@@ -172,3 +172,5 @@ dist
 .wrangler/
 
 /src/generated
+
+/client

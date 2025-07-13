@@ -10,9 +10,19 @@ import { adminRestrictedRouter } from '@/routes/admin/users/{handle}/token';
 
 import { jwtMiddleware, jwtOptional } from '@/middleware/jwt';
 import { tagsPublicRouter } from '@/routes/tags';
+import { cors } from 'hono/cors';
 
 const app = new OpenAPIHono<{ Bindings: Env }>({ strict: false });
 
+// CORS対応
+app.use('/*', cors());
+app.use(
+  '/*',
+  cors({
+    origin: '*', // 'http://example.com',
+    allowHeaders: ['Content-Type', 'Authorization'],
+  })
+);
 // APIドキュメントを出力
 app
   .doc('/openapi.json', {
@@ -21,7 +31,6 @@ app
       title: 'Cfblog-practice API',
       version: '1.0.0',
     },
-    
   })
   .get('/doc', swaggerUI({ url: '/openapi.json' }));
 
@@ -32,10 +41,8 @@ app
   .route('/', pagesPublicRouter)
   .route('/', usersPublicRouter)
   .route('/', likesPublicRouter)
-  .route("/", tagsPublicRouter);
-app
-  .use('*', jwtOptional)
-  .route('/', likesAccessibleRouter);
+  .route('/', tagsPublicRouter);
+app.use('*', jwtOptional).route('/', likesAccessibleRouter);
 app
   .use('*', jwtMiddleware)
   .route('/', imagesRestrictedRouter)

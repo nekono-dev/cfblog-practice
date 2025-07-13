@@ -1,7 +1,8 @@
 # build output
 dist/
 # generated types
-.astro/
+.astro/*
+!.astro/settings.json
 
 # dependencies
 node_modules/
@@ -22,3 +23,6 @@ pnpm-debug.log*
 
 # jetbrains setting folder
 .idea/
+
+src/client/*
+!src/client/.gitkeep

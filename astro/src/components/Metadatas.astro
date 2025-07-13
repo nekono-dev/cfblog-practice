@@ -1,0 +1,33 @@
+---
+interface Props {
+    pageTitle: string;
+    subPath: string;
+    ogpImgUrl: string;
+    robots: string[];
+}
+const { pageTitle, subPath, ogpImgUrl, robots } = Astro.props;
+
+const description = 'this is cfblog-practice';
+const twitterHandle = '@nekono_dev';
+const url = new URL(subPath, Astro.url);
+---
+
+<link rel="icon" href="/favicon.ico" />
+<link rel="apple-touch-icon" sizes="192x192" href="/favicon.svg" />
+<link rel="manifest" href="/manifest.webmanifest" />
+<meta property="og:url" content={url} />
+<meta property="og:type" content="website" />
+<meta property="og:title" content={pageTitle} />
+<meta property="og:description" content={description} />
+<meta property="og:site_name" content="noname" />
+<meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content={twitterHandle} />
+<meta name="twitter:title" content={pageTitle} />
+<meta name="twitter:description" content="" />
+<meta name="twitter:image" content={ogpImgUrl} />
+<meta property="og:image" content={ogpImgUrl} />
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="generator" content={Astro.generator} />
+<meta name="robots" content={robots.join()} />
+<title>{pageTitle}</title>
