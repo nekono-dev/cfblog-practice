@@ -4,6 +4,7 @@ const route = createRoute({
   path: '/images',
   method: 'put',
   description: 'Upload a PNG or JPEG image to the server.',
+  tags: ['images'],
   security: [{ Bearer: [] }],
   request: {
     body: {
