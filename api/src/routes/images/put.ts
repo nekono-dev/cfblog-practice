@@ -3,20 +3,14 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   path: '/images',
   method: 'put',
-  description: 'Upload a PNG or JPEG image to the server.',
+  description: 'Upload a image to the server.',
   tags: ['images'],
   security: [{ Bearer: [] }],
   request: {
     body: {
       required: true,
       content: {
-        'image/png': {
-          schema: z.any().openapi({
-            type: 'string',
-            format: 'binary',
-          }),
-        },
-        'image/jpeg': {
+        'image/*': {
           schema: z.any().openapi({
             type: 'string',
             format: 'binary',

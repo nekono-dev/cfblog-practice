@@ -13,16 +13,10 @@ const route = createRoute({
     200: {
       description: 'Image retrieved successfully',
       content: {
-        'image/png': {
+        'image/*': {
           schema: z.any().openapi({
             format: 'binary',
             example: '<png binary stream>',
-          }),
-        },
-        'image/jpeg': {
-          schema: z.any().openapi({
-            format: 'binary',
-            example: '<jpeg binary stream>',
           }),
         },
       },
