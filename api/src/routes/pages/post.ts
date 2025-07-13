@@ -4,7 +4,7 @@ const route = createRoute({
   path: '/pages',
   method: 'post',
   description: 'Create a new page with specified content and metadata.',
-  tags: ["pages"],
+  tags: ['pages'],
   security: [{ Bearer: [] }],
   request: {
     body: {
@@ -12,9 +12,9 @@ const route = createRoute({
       content: {
         'application/json': {
           schema: z.object({
-            pageId: z.string(),
+            pageId: z.string().nonempty(),
             title: z.string(),
-            text: z.string().nullable(),
+            text: z.string(),
             imgId: z.string().nullable().optional(),
             tags: z.string().array(),
             date: z.coerce.date(),

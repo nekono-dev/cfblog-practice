@@ -3,8 +3,9 @@ import { createRoute, z } from '@hono/zod-openapi';
 const route = createRoute({
   path: '/pages',
   method: 'delete',
-  description: 'Delete one or more pages, optionally removing associated images.',
-  tags: ["pages"],
+  description:
+    'Delete one or more pages, optionally removing associated images.',
+  tags: ['pages'],
   security: [{ Bearer: [] }],
   request: {
     body: {
@@ -13,9 +14,11 @@ const route = createRoute({
         'application/json': {
           schema: z.object({
             pageId: z.string().min(1).array(),
-            option: z.object({
-              deleteImage: z.boolean().optional(),
-            }).optional(),
+            option: z
+              .object({
+                deleteImage: z.boolean().optional(),
+              })
+              .optional(),
           }),
         },
       },
@@ -36,20 +39,6 @@ const route = createRoute({
         },
       },
     },
-    400: {
-      description: 'Invalid request format',
-      content: {
-        'application/json': {
-          schema: z
-            .object({
-              error: z.string(),
-            })
-            .openapi({
-              example: { error: 'Invalid request' },
-            }),
-        },
-      },
-    },
     404: {
       description: 'One or more pages not found',
       content: {
@@ -61,6 +50,16 @@ const route = createRoute({
             .openapi({
               example: { error: 'Page not found' },
             }),
+        },
+      },
+    },
+    405: {
+      description: 'Method not allowed',
+      content: {
+        'application/json': {
+          schema: z
+            .object({ error: z.string() })
+            .openapi({ example: { error: 'Method Not Allowed' } }),
         },
       },
     },

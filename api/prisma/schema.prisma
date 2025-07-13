@@ -46,13 +46,22 @@ model Like {
   userId Int
 }
 
+model Role {
+  id        Int     @id @default(autoincrement())
+  name      String  @unique
+  writeAble Boolean @default(false)
+  loginAble Boolean @default(true)
+  listAble  Boolean @default(false)
+  users     User[]
+}
+
 model User {
-  id             Int       @id @unique @default(autoincrement())
+  id             Int       @id @default(autoincrement())
   handle         String    @unique
   name           String
   hashedPassword String
   birthday       DateTime?
+  roleId         Int
+  role           Role      @relation(fields: [roleId], references: [id])
   likes          Like[]
-  writeAble      Boolean   @default(false)
-  loginAble      Boolean   @default(true)
 }

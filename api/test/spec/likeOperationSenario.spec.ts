@@ -8,8 +8,8 @@ import {
   usersURL,
   likesURL,
   usersPrivURL,
-} from './urls';
-import { adminHandle, adminPasswd } from './param';
+} from '../common/urls';
+import { adminHandle, adminPasswd } from '../common/param';
 
 describe('Like Operation test', () => {
   let adminToken: string;

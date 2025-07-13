@@ -1,7 +1,7 @@
 import { createRoute, z } from '@hono/zod-openapi';
 
 const route = createRoute({
-  path: '/pages/{pageId}',
+  path: '/pages/page/{pageId}',
   method: 'get',
   description: 'Retrieve information for a specific page by its ID.',
   tags: ["pages"],

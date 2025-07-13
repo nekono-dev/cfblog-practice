@@ -4,7 +4,7 @@ const route = createRoute({
   path: '/images',
   method: 'delete',
   description: 'Delete an image using its key.',
-  tags: ["images"],
+  tags: ['images'],
   security: [{ Bearer: [] }],
   request: {
     body: {
@@ -60,6 +60,16 @@ const route = createRoute({
                 error: 'Image not found',
               },
             }),
+        },
+      },
+    },
+    405: {
+      description: 'Method not allowed',
+      content: {
+        'application/json': {
+          schema: z
+            .object({ error: z.string() })
+            .openapi({ example: { error: 'Method Not Allowed' } }),
         },
       },
     },

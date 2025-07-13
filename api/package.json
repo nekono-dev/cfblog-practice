@@ -5,10 +5,10 @@
   "scripts": {
     "deploy": "wrangler deploy --minify",
     "dev": "wrangler dev",
-    "start": "wrangler dev",
+    "dev:host": "wrangler dev --ip 0.0.0.0",
     "test:only": "tsx ./test/run.ts",
-    "reset": "wrangler d1 execute cfblog-practice --file=./test/seed.test.sql",
-    "test": "npm run reset && vitest run",
+    "reset": "wrangler d1 execute cfblog-practice --file=./test/reset.sql",
+    "test": "npm run reset && npm run seed && vitest run",
     "cf-typegen": "wrangler types",
     "seed": "wrangler d1 execute cfblog-practice --file=./prisma/seed.sql",
     "seed:remote": "wrangler d1 execute cfblog-practice --remote --file=./prisma/seed.sql"

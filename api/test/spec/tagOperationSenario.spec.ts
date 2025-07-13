@@ -7,8 +7,9 @@ import {
   likesURL,
   tagsURL,
   pagesURL,
-} from './urls';
-import { adminHandle, adminPasswd } from './param';
+  pagesPageURL,
+} from '../common/urls';
+import { adminHandle, adminPasswd } from '../common/param';
 
 describe('Tag Operation test', () => {
   let adminToken: string;
@@ -141,7 +142,7 @@ describe('Tag Operation test', () => {
   });
 
   it('🔴[Negative] Check page deleted', async () => {
-    const response = await fetch(new URL(testPage1Id, pagesURL), {
+    const response = await fetch(new URL(testPage1Id, pagesPageURL), {
       method: 'GET',
     });
     const apiResult = await response.json();

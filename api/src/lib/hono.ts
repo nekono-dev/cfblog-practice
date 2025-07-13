@@ -7,11 +7,22 @@ const createOpenApiHono = <E extends Env = Env>() =>
     strict: false,
     defaultHook: (result) => {
       if (!result.success) {
-        throw new HTTPException(401, {
-          res: new Response(JSON.stringify({ error: 'Invalid request' }), {
-            status: 400,
-            headers: { 'Content-Type': 'application/json' },
-          }),
+        if (result.error.name === 'ZodError') {
+          throw new HTTPException(400, {
+            res: new Response(JSON.stringify({ error: 'Invalid request' }), {
+              status: 400,
+              headers: { 'Content-Type': 'application/json' },
+            }),
+          });
+        }
+        throw new HTTPException(500, {
+          res: new Response(
+            JSON.stringify({ error: 'Internal server error' }),
+            {
+              status: 500,
+              headers: { 'Content-Type': 'application/json' },
+            }
+          ),
         });
       }
     },

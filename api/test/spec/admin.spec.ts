@@ -1,8 +1,8 @@
 // import { SELF, env } from 'cloudflare:test';
 import { describe, it, expect } from 'vitest';
 import { z } from 'zod';
-import { usersPrivURL, usersTokenURL } from './urls';
-import { adminHandle, adminPasswd, adminName } from './param';
+import { usersPrivURL, usersTokenURL } from '../common/urls';
+import { adminHandle, adminPasswd, adminName } from '../common/param';
 
 describe('Admin Control test', () => {
   let adminToken: string;
