@@ -1,0 +1,44 @@
+---
+// PageListにより取得できるPageをすべて作成
+import { type PagesListGet200ResponsePagesInner } from '@/client';
+import getPageList from '@/lib/getPagesList';
+
+export async function getStaticPaths() {
+    // pages/listエンドポイントの結果を取得
+    const getPageResult = await getPageList();
+    const result = getPageResult.map((entry, index) => ({
+        params: {
+            pageId: entry.pageId,
+        },
+        props: {
+            entry,
+        },
+    }));
+    return result;
+}
+
+import Metadatas from '@/components/Metadatas.astro';
+interface Props {
+    entry: PagesListGet200ResponsePagesInner;
+}
+const { entry } = Astro.props;
+
+const pageUrl = Astro.url.pathname;
+const ogpImgUrl = 'ogpImage.png';
+const robots = ['index', 'follow', 'noarchive', 'noimageindex'];
+---
+
+<html lang="ja">
+    <head prefix="og: https://ogp.me/ns#">
+        <Metadatas
+            pageTitle={entry.title}
+            subPath={pageUrl}
+            ogpImgUrl={ogpImgUrl}
+            robots={robots}
+        />
+    </head>
+    <body>
+        <h1>Prirenderd page</h1>
+        {JSON.stringify(entry)}
+    </body>
+</html>

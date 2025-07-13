@@ -2,20 +2,28 @@
 import LoginButton from '@/components/loginButton';
 import PostButton from '@/components/postButton';
 import CreateUser from '@/components/createUser';
+import Metadatas from '@/components/Metadatas.astro';
+
+const pageUrl = Astro.url.pathname;
+
+const pageTitle = 'cfblog-practice';
+const ogpImgUrl = 'ogpImage.png';
+const robots = ['index', 'follow', 'noarchive', 'noimageindex'];
 ---
 
-<html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <meta name="viewport" content="width=device-width" />
-    <meta name="generator" content={Astro.generator} />
-    <title>Astro</title>
-  </head>
-  <body>
-    <h1>Astro</h1>
-    <CreateUser client:only="react" ; />
-    <LoginButton client:only="react" ; />
-    <PostButton client:only="react" ; />
-  </body>
+<html lang="ja">
+    <head prefix="og: https://ogp.me/ns#">
+        <Metadatas
+            pageTitle={pageTitle}
+            subPath={pageUrl}
+            ogpImgUrl={ogpImgUrl}
+            robots={robots}
+        />
+    </head>
+    <body>
+        <h1>Cfblog-practice</h1>
+        <CreateUser client:only="react" ; />
+        <LoginButton client:only="react" ; />
+        <PostButton client:only="react" ; />
+    </body>
 </html>
