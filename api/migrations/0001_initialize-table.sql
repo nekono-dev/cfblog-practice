@@ -35,14 +35,23 @@ CREATE TABLE "Like" (
 );
 
 -- CreateTable
+CREATE TABLE "Role" (
+    "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name" TEXT NOT NULL,
+    "writeAble" BOOLEAN NOT NULL DEFAULT false,
+    "loginAble" BOOLEAN NOT NULL DEFAULT true,
+    "listAble" BOOLEAN NOT NULL DEFAULT false
+);
+
+-- CreateTable
 CREATE TABLE "User" (
     "id" INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
     "handle" TEXT NOT NULL,
     "name" TEXT NOT NULL,
     "hashedPassword" TEXT NOT NULL,
     "birthday" DATETIME,
-    "writeAble" BOOLEAN NOT NULL DEFAULT false,
-    "loginAble" BOOLEAN NOT NULL DEFAULT true
+    "roleId" INTEGER NOT NULL,
+    CONSTRAINT "User_roleId_fkey" FOREIGN KEY ("roleId") REFERENCES "Role" ("id") ON DELETE RESTRICT ON UPDATE CASCADE
 );
 
 -- CreateIndex
@@ -64,7 +73,7 @@ CREATE UNIQUE INDEX "PageTag_pageId_tagId_key" ON "PageTag"("pageId", "tagId");
 CREATE UNIQUE INDEX "Like_id_key" ON "Like"("id");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_id_key" ON "User"("id");
+CREATE UNIQUE INDEX "Role_name_key" ON "Role"("name");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_handle_key" ON "User"("handle");
