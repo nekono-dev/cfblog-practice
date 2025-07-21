@@ -17,6 +17,9 @@ $ npx wrangler -v
 
 ```sh
 npm install
+apt install docker.io
+sudo gpasswd --add $USER docker
+newgrp docker
 ```
 
 ### クライアントを生成
